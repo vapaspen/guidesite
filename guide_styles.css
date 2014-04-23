@@ -1,0 +1,73 @@
+/* CSS for the analytics Demo Display Box. It is being displayed on the right */
+.analytics
+{
+float:right;
+}
+
+/* The main box the Guide Runs in. It doesn't need to have any of these features  */
+.guide_area
+{
+border:3px solid #a1a1a1;
+padding:10px 10px; 
+background:#888888;
+}
+
+/* CSS for the guide elements. margin auto is to center the box.   */
+.mainbox
+{
+border:2px solid #a1a1a1;
+padding:10px 40px; 
+background:#8FE9A7;
+margin-left: auto;
+margin-right: auto;
+border-radius:25px;
+}
+
+/*CSS for the question element space in the Guide_elements. 
+Margin-right: 10% keeps the box from overlapping with the remove button. */
+.mainbox_qspace
+{
+border:2px solid #a1a1a1;
+padding:10px 50px;
+margin-right: 10%;
+background:#C88FE9;
+border-radius:25px;
+}
+
+/* CSS for the Answer buttons. display: inline-block helps to Line up the answer disply  */
+.mainbox_answerbutton
+{
+border:2px solid #a1a1a1;
+padding:5px;
+background:#C88FE9;
+border-radius:25px;
+display: inline-block;
+}
+
+/* CSS for the Selected Answer. This just changing the color right now.  */
+.mainbox_answerbutton_selected
+{
+border:2px solid #a1a1a1;
+padding:5px;
+background:#8C64A3;
+border-radius:25px;
+display: inline-block;
+}
+
+/* CSS for Remove element buttons. Set it to display on the right side.*/
+.removecss
+{
+float:right;
+}
+
+/*Css to have the box that displays HD guide code on the right.*/
+.ReplayCodeBox
+{
+float:right;  
+}
+
+.copybutton
+{
+
+}
+

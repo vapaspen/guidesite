@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<guide_list>
+    <guidename guideloc = "/guides/Technical_Troubleshooting.xml" guideid="LG" is_selectable="true">
+        Technical_Troubleshooting
+    </guidename>
+    <guidename guideloc = "Subscription_Troubleshooting.xml" guideid="SG" is_selectable="true">
+        Subscription_Troubleshooting
+    </guidename>
+    <guidename guideloc = "account_Troubleshooting.xml" guideid="AG" is_selectable="False">
+        account_Troubleshooting
+    </guidename>
+</guide_list>
+

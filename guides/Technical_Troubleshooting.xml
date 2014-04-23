@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LG>
+    <guidename>
+        Technical_Troubleshooting
+    </guidename>
+    <version>
+         verion="1.0"
+    </version>
+			<element elname="XC">
+				<question> Is the issue the user is experiencing, a known issue found on the communication board or something you have been told about? </question>
+				<answer atarget = "XC.1" >
+				yes
+				</answer>
+				<answer atarget ="DE" >
+				no
+				</answer>
+			</element>
+			
+			<element elname="XC.1">
+				<question>Is the issue your user is having part of a known system event?</question>
+				<answer atarget ="XC.2">
+				yes
+				</answer>
+				<answer atarget ="DE">
+				no
+				</answer>
+			</element>
+			
+			<element elname="XC.2">
+				<question>Were you asked to gather any information from the User to help support the system event?</question>
+				<answer atarget ="XC.2-2">
+				yes
+				</answer>
+				<answer atarget ="XC.2-1">
+				no
+				</answer>
+			</element>
+			
+			<element elname="XC.2-1">
+				<question>Explain to the user that there is currently a system issue and offer them the ticket number for the contact.</question>
+			</element>
+			
+			<element elname="XC.2-2">
+				<question>Gather the information that was requested by the network team from the user. Then advise the user there is a known system issue and offer them the ticket number for the contact.</question>
+			</element>
+			
+			<element elname="DE">
+				<question>Can you find a Knowledge Base article for the users issue?</question>
+				<answer atarget ="DE.1">
+				yes
+				</answer>
+				<answer atarget ="FG">
+				no
+				</answer>
+			</element>
+			
+			<element elname="DE.1">
+				<question>Please note the number of the Knowledge Base article in your ticket. After walking the user through the steps listed in the article, is the user's issue resolved?</question>
+				<answer atarget ="DE.2">
+				yes
+				</answer>
+				<answer atarget ="FG">
+				no
+				</answer>
+			</element>
+			
+			<element elname="DE.2">
+				<question>The issue should now be resolved, confirm this with the user. Thank you for using the guide.</question>
+			</element>
+			
+		</LG>
+
+

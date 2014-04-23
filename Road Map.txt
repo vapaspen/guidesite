@@ -1,0 +1,95 @@
+--------------- Done Fetures ---------------------------
+
+/****** Done but formating issues on the output 
+Update the Error object to have a function that makes the stack. 
+    The stack will only display the error message for the first calling error. 
+    all subsuquint errors will have an error code unless they are a method boundary
+    method boundaries will report to the stack with just the name of the method
+    *********/
+
+/***** Done
+Create a method in the error object for each of 2 types of error: Program Errors and User errors.
+    User error will always display a message to the end user but will no display normal error info unless debug mode is on
+    Program errors will display to console unless debug mode is on.
+*****/ 
+
+/**** Done
+Modify the error display to check if it is a program error or a user error.
+    if it is a user error, call method for displaying user errors.
+    if it is a program error call method for displaying program errors.
+*****/
+
+/***** Done
+added a method that find the bottom item on the stack for referance
+*****/
+
+/*****Stop Progress
+Add a Try Catch to every method to that will toss an error with a code of the title of the method.
+
+Note in commets a list of the error segments above the error code handler.  
+
+Finish adding Error traping to all methods. 
+*****/
+
+/***** Done
+Make a Back up of current Progress
+
+Remove all work on current error handler
+*****/ 
+
+/***************************** Done
+Configure the XMLhttpRequest to be Asynchronous with a timeout
+    change existing xml Request to have true in place of false. 
+    add a callback args
+    add a rutuine to start a timer for timeouts.
+    add a rutuine call the call back on xmlhttp request change.
+
+Add an Ascyncronaus function to check the stat of the timeout and fire a callback error on timeout failed.
+*****************************/
+
+
+----------------------In Progress--------------------------
+
+
+/*****************************/
+Manage errors with a Basic error function. Manage handled errors to report trouble shooting information to the end user.
+    Try Catch should be on the main unput only. 
+
+Update Copy Guide have the button Not display when the Guide us not active.
+Update Copy Guide to throw a user error when its activated with no content.
+
+
+/*****************************/
+Functionality to display a code for the Nodes hit by user and to enter code to re trace the nodes. 
+
+add a function that displays the list of Node Hit
+    Make a Input Box that will display the results by defult in the Header
+    Use a Loop to Look through Page objects and find 
+    have this function update perodicly  (on creat and on remove)
+
+add a function that looks at the Input Box with the List of Nodes and recreats the Layout Based on the List.
+
+
+/*****************************/
+Go though all elements standardize CSS elements
+
+
+/*****************************/
+Add context Sentitive engin
+    Update teh function that displays the list of guides to only display a list if there is more then one.
+        if there is only one guide to display, just start the guide. 
+        This function will no longer work with XML but will work with an array of guides made from the context engine. 
+    
+    Update the function that loads the list guides for that page to load a list of guides with context Data
+
+    Update the start guide function to have agrs for the context engin.
+        args for: URL, Location, and Error message
+
+add a function that looks through the list of guides with context Data and compairs it to the args from the context input
+    If nothing is found look for guides with the Default parpater.
+    make this the list of Guides the User selects from.   
+      
+       
+
+/*****************************/
+add Localazation to the tools

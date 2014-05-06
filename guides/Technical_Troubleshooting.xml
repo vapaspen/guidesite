@@ -1,11 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <LG>
-    <guidename>
+    <guidename guideid="LG" version="1.0">
         Technical_Troubleshooting
     </guidename>
-    <version>
-         verion="1.0"
-    </version>
 			<element elname="XC">
 				<question> Is the issue the user is experiencing, a known issue found on the communication board or something you have been told about? </question>
 				<answer atarget = "XC.1" >

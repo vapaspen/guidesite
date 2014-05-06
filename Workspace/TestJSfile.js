@@ -13,53 +13,6 @@
 
 
 
-//A function to make a Div that returns its ID
-//Takes the Following args as Required Args: Location: string, ID:string
-//Takes the Following args as optional class:string, Text:string
-makeDiv = function (location, id, class_in, text_in) {
-
-
-    //validate the input of required Args
-    if (location == undefined) { throw "Args location Undefind" }
-    if (id == undefined) { throw "Args id Undefind" }
-
-    //make Local vars with strings
-    var text = "";
-    var class_store = "";
-
-    //Overwrite the default value of the Local value and an input was given 
-    if (class_in != undefined) { class_store = class_in; }
-    if (text_in != undefined) { class_store = text_in; }
-
-    //assign a Local variable for the Location the Div is being made. 
-    var incertlocation = byid(location);
-
-    //Make the Div The option componets will display but with "" in the value
-    incertlocation.innerHTML += "<div";
-    incertlocation.innerHTML += " id=" + id;
-    incertlocation.innerHTML += " class=" + class_store;
-    incertlocation.innerHTML += ">" + text;
-    incertlocation.innerHTML += "</div>";
-
-
-    //Retun when done by sending back a referance to the Div we made. (HTML Object)
-    return byid(id);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ////------------------////
 //// Time Out Object  ////
 

@@ -5,16 +5,63 @@
 //returns the ID of the element as a HTML object type. 
 function byid(idname) {
 
+    //check if input is a string
+    if(typeof(idname) != "string"){throw "byID Error. Not type String";}
 
-    if(typeof(idname) != "string"){throw "byID Error. Not type String";}//check if input is a string
+    //get the Element 
     var element = document.getElementById(idname);
 
-    if(element == undefined){throw idname + " ID undefined";} // throw ID undefind if ID is not found
+    // throw ID undefind if ID is not found
+    if(element == undefined){throw idname + " ID undefined";} 
+
+    //Retrun the found element 
     return element;
 }
 
 
+//A function to make a Div that returns its ID as an HTML Object
+//Takes the Following args as Required Args: Location: string or HTML OBJ, ID:string
+//Takes the Following args as optional class:string, Text:string
+makeDiv = function (location, id, class_in, text_in) {
 
+	//Iniazlie a variable that will hold the string that is use to make the Div
+	var outputstring = "";
+
+    //validate the input of required Args
+    //If the input is missing throw and error
+    if (typeof(id) == "undefined") { throw "Args location Undefind"; }
+    if (typeof(id) == "undefined") { throw "Args id Undefind"; }
+
+
+    //make Local vars with strings
+    var text = "";
+    var class_store = "";
+
+    //Overwrite the default value of the Local value and an input was given 
+    if (class_in != undefined) { class_store = class_in; }
+    if (text_in != undefined) { text = text_in; }
+
+    //assign a Local variable for the Location the Div is being made. 
+    var incertlocation = location;
+
+    //if the input is a string then overright the incertlocation to me an object of based on the ID of the Loaction
+    if(typeof (location) == "string"){incertlocation = byid(location);}
+    
+
+    //Make the Div The option componets will display but with "" in the value
+	outputstring += '<div';
+	outputstring += ' id="'+ id +'" ';
+	outputstring += ' class="' + class_store + '"';
+	outputstring += '>' + text;
+    outputstring += '</div>';
+	
+    //Push the string into the incertlocation to make the new Div
+	incertlocation.innerHTML += outputstring;
+
+
+    //Retun when done by sending back a reference to the Div we made. (HTML Object)
+    return byid(id);
+}
 
 
 //Function to Load XML Asynchronously. Based on the Load with timeout From developer.mozilla.org
@@ -30,7 +77,6 @@ function loadFile(sURL, timeout, fCallback /*, argumentToPass1, argumentToPass2,
 
     //set the object to store its callback 
     ReqObj.callback = fCallback;
-
     //Slice the first 3 args off and store the rest of the areguments of this function for later use
     ReqObj.arguments = Array.prototype.slice.call(arguments, 3);
 
@@ -81,11 +127,76 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
 
     this.pageobjects = new Array();
 
+    //---Container Variables---//
+    //Container the Guide displays in. 
     this.pagespace = byid(current_page_space);
 
-    this.buttonclass = "mainbox";
+    //Main Div for the whole heading. 
+    //(ID: "guide_heading" Class: "guide_heading")
+    this.myheading = undefined;
+
+    //Div for holding the Replay section.
+    //(ID:"ReplayCodeBoxDiv" Class: "ReplayCodeBox" )
+    this.ReplayCodeBoxDiv = undefined;
+
+    //Div Head for the Guide Heading 
+    //(ID:"guide_head_heading" Class: "guide_head_heading" )
+    this.guide_head_heading = undefined;
+
+    //fourm for guide selection
+    //(ID:"guide_selection_forum" Class: "guide_selection_forum" )
+    this.guide_selection_forum = undefined;
+
+    //-------------------//
+
+    //---General Text Variables---//
+    //---------------------------//
+
+    //Text displayed for the lable
+    this.replayBox_lable = "Guide Code:";
+
+    //Text displayed on Submit button for ReplayCode_submit
+    this.ReplayCode_submit_value = "Launch Guide";
+
+    //heading Text 
+    this.heading_Text = "Welcome to the 24/7 Support agent Guided assistance Page!";
+
+    //Guide elements for not having an answer. 
+    this.NoAnswewr = "Thank you for using the Helpdesk Guide System";
+
+    //---------------------------//
+
+    //---User Message Text Variables---//
+    //replay code not entered user message
+    this.replay_string_missing = "Please enter a Guide Support code";
+
+    //Replay code Missing or improperly formated Guide Name
+    this.replay_code_name_missing = "Guide name not entered correctly. Please reenter the guide code.";
+
+    //Replay code Missing or improperly formated Guide version
+    this.replay_code_ver_missing = "Guide Verion not found in Guide Code. Please reenter the guide code.";
+
+    //Replay code Missing or improperly formated Path Code
+    this.replay_code_path_missing = "Guide code not propely formated. Please reenter the guide code.";
+
+    //---------------------------------//
+
+    //Object to hold the parsed Input 
+    this.usableinput = new Parseinput();
+
+    this.buttonclass = "guide_element";
 
     this.timout = 2000;
+
+    this.replayinput = undefined;
+
+    this.isReplay = false;
+
+    this.guideVersion = undefined;
+
+    this.guideID = undefined;
+
+    this.replaycode = undefined;
 
     this.guideheading = "guide_heading";
     this.currentGuideXML = null;
@@ -107,8 +218,9 @@ GuideObj.prototype.handleEvent = function (event) {
 
         try{// if the event is for one of our buttons catch aney errors those buttons functions throw. 
 
-            if (event.target.id == "copybutton") { this.copyToClip() }
-            if (event.target.id == "start_button") { this.findSelGuid() }
+            if (event.target.id == "copybutton") { this.copyToClip(); }
+            if (event.target.id == "start_button") { this.findSelGuid(); }
+            if (event.target.id == "ReplayCode_submit") { this.loadreplay(); }
 
         }//end of try. Catch the errors and Run the error handler. 
         catch (err) {errhandler(err, this.is_debugmode);}
@@ -178,25 +290,31 @@ GuideObj.prototype.handleEvent = function (event) {
         //Takes the varible sent to the XML request and Load it
         switch (loadID) {
 
-            //If Load ID is 1 Load Configuration Variable 
+            //If Load ID is 1 Load Configuration Variable   
             case 1:
                 objref.guideConfig = XML_in;
                 //ToDo: - Parse and Load Config XML
                 break;
 
-            //If Load ID is 2 Set the guideListXML Var then Run the Make Guide Display
+            //If Load ID is 2 Set the guideListXML Var then Run the Make Guide Display  
             case 2:
                 objref.guideListXML = XML_in;
                 objref.make_guide_display();
                 break;
 
-            //If Load ID is 3 Set the Current XML and Run the Function to statrt the guide 
+            //If Load ID is 3 Set the Current XML and Run the Function to statrt the guide   
             case 3:
                 objref.currentGuideXML = XML_in;
                 objref.start_guide();
                 break;
 
-            //Return false of this is called with a Load ID that is not listed
+            //If Load ID is 4 Sent the Current XML and Run the Replay.!!!! Currently a stub  
+            case 4:
+                objref.currentGuideXML = XML_in;
+                alert(loadID);
+                break;
+
+            //Return false of this is called with a Load ID that is not listed  
             default:
                 return false;
         }
@@ -216,38 +334,35 @@ GuideObj.prototype.handleEvent = function (event) {
 
 
         //forum Heading
-        this.pagespace.innerHTML += '<div class =' + this.guideheading + ' id=' + this.guideheading + ' >';
-        this.pagespace.innerHTML += '</div>';
-
-        //store the guide forum for a moment
-        var myheading = byid(this.guideheading);
+        this.myheading = makeDiv(this.pagespace, "guide_heading", "guide_heading");
 
         // make a Box to Hold the Guide Helpdesk Code - this will Fload Right
-        myheading.innerHTML += '<div class="ReplayCodeBox" id="ReplayCodeBoxDiv"></div>';
-
-        //Load Div in to a temp var for repeated use
-        var ReplayCodeBoxDiv = byid("ReplayCodeBoxDiv");
+        this.ReplayCodeBoxDiv = makeDiv(this.myheading, "ReplayCodeBoxDiv", "ReplayCodeBox");
 
         //add the input Box to the Div
-        ReplayCodeBoxDiv.innerHTML += '<lable> Guide Code:<input type = "text" class="ReplayCodeBox" id="ReplayCodeBox"></lable>';
+        this.ReplayCodeBoxDiv.innerHTML += '<lable> ' + this.replayBox_lable + '<input type = "text" class="ReplayCodeBox" id="ReplayCodeBox"></lable>';
 
         //add a submitt butt for the Guide Code
-        ReplayCodeBoxDiv.innerHTML += '<input type="button" id="ReplayCode_submit" value="Launch Guide">';
+        this.ReplayCodeBoxDiv.innerHTML += '<input type="button" id="ReplayCode_submit" value=' + this.ReplayCode_submit_value + '>';
+
+        //add the replay Code box as a object var for later referance. 
+        this.replayinput = byid("ReplayCodeBox");
 
 
-        //Display title
-        myheading.innerHTML += '<div class = "guide_head_heading">Welcome to the 24/7 Support agent Guided assistance Page!<div>';
+        //Make the Title box and Display title text 
+        this.guide_head_heading = makeDiv(this.myheading, "guide_head_heading", "guide_head_heading", this.heading_Text);
+
+
 
         //Forum creation
-        myheading.innerHTML += '<form class = "guide_selection_forum" id="guide_selection_forum" >';
-        myheading.innerHTML += '</form>';
-        myheading.innerHTML += '<br>';
+        this.myheading.innerHTML += '<form class = "guide_selection_forum" id="guide_selection_forum" >';
+        this.myheading.innerHTML += '</form>';
+
+        this.myheading.innerHTML += '<br>';
 
         this.add_start_button();
         this.makeform("guide_selection_forum");
-        this.pagespace.innerHTML += '<input type="button" class="copybutton" id="copybutton" value="copy guide"></input>';
-
-
+        this.myheading.innerHTML += '<input type="button" class="copybutton" id="copybutton" value="copy guide"></input>';
     }
 
 
@@ -255,15 +370,14 @@ GuideObj.prototype.handleEvent = function (event) {
     GuideObj.prototype.makeform = function (location) {
         var guidenames = null;
 
+        //Load the Globle var with the Location of the forum 
+        this.guide_selection_forum = byid(location);
+
         //validate input
-        if (typeof location != "string") { throw "Cant make Guide select buttons, location not string" }
         if (typeof this.guideListXML === null || typeof this.guideListXML === undefined) { throw "Cant make Guide select buttons, guideListXML empty" }
 
         //initalize a var thats used to check if buttons are made. starts false and is set to ture when a button is made. checked at the end
         var made_buttons = false;
-
-        //get the form
-        var myform = byid(location);
 
         //Get Guide Names
         guidenames = this.guideListXML.getElementsByTagName("guidename");
@@ -281,32 +395,28 @@ GuideObj.prototype.handleEvent = function (event) {
 
                 //validate data from XML file
                 if (input_guidID == undefined) { throw "XML in Guide Names List not formatted Correctly. Guide ID is not found." }
-                if (input_name == undefined) { throw "XML in Guide Names List not formated Correctly. Guide of ID: " + input_guidID + " is missing NodeValue"  }
+                if (input_name == undefined) { throw "XML in Guide Names List not formated Correctly. Guide of ID: " + input_guidID + " is missing NodeValue" }
                 if (input_target == undefined) { throw "XML in Guide Names List not formated Correctly. Guide of ID: " + input_guidID + " is missing Guideloc" }
 
                 //build buttons, add custome data for Guide target.
-                myform.innerHTML += input_name + ': <input type = "radio" name="guideselect" id="guideselect_' + input_guidID + '" data-guidetarget="' + input_target + '">';
-                myform.innerHTML += "<br>";
+                this.guide_selection_forum.innerHTML += input_name + ': <input type = "radio" name="guideselect" id="guideselect_' + input_guidID + '" data-guidetarget="' + input_target + '">';
+                this.guide_selection_forum.innerHTML += "<br>";
 
                 //set made_buttons = ture as a last check to 
                 made_buttons = true;
             }
         }
-
         //last check to ensure that buttons are made
         if (made_buttons == false) { throw "No Buttons were Made." }
-
     };
 
 
-
+    
     //add the start button
     GuideObj.prototype.add_start_button = function () {
 
-        //Find the Heading
-        var myheading = byid(this.guideheading); //(throws undefind)
         // add button to start guide
-        myheading.innerHTML += '<input id="start_button" type="button" value= "Start this Guide"></input>';
+        this.myheading.innerHTML += '<input id="start_button" type="button" value= "Start this Guide"></input>';
         
     };
 
@@ -352,26 +462,26 @@ GuideObj.prototype.findSelGuid = function(){
 //This calls the Guide element Object to make the Guide Itself.
 //Will also Hide buttons that should not be use after the Guide starts
 GuideObj.prototype.start_guide = function () {
-        var list_of_ele = null; //holder for the list of elements
-        var firstelement = null; //holder for teh String naming the first element in the Guide.
+    var list_of_ele = null; //holder for the list of elements
+    var firstelement = null; //holder for the String naming the first element in the Guide.
 
-            //Parses the Guide XML for all Elements and loads them. 
-            list_of_ele = this.currentGuideXML.getElementsByTagName('element');
+    //Update the Guide Info variables
+    this.getGuideInfo();
 
-            //Load the firstelement with the first Node in the list. 
-            firstelement = list_of_ele[0].getAttribute('elname');
+    //Parses the Guide XML for all Elements and loads them. 
+    list_of_ele = this.currentGuideXML.getElementsByTagName('element');
 
-            //Start the guide by its first element 
-            this.make_guide_ele(firstelement);
+    //Load the firstelement with the first Node in the list. 
+    firstelement = list_of_ele[0].getAttribute('elname');
 
-            //hide the start button once the its been used so it can not me triggered again. 
-            byid("start_button").setAttribute("style", "display: none");
+    //Start the guide by its first element 
+    this.make_guide_ele(firstelement);
 
-            //Hide the Launch button for the Guide Repete function. 
-            byid("ReplayCode_submit").setAttribute("style", "display: none");
+    //hide the start button once the its been used so it can not me triggered again. 
+    byid("start_button").setAttribute("style", "display: none");
 
-            //Disable the Guide Code Input Box for Input
-            byid("ReplayCodeBox").disabled = true;
+    //Hide the Launch button for the Guide Repete function. 
+    byid("ReplayCode_submit").setAttribute("style", "display: none");
 
 };
 
@@ -382,8 +492,132 @@ GuideObj.prototype.start_guide = function () {
         // makes a new box object and adds it to the Page array
         this.pageobjects.push(new Guide_ele(this, this.pageobjects.length, this.buttonclass, next_element));
 
-        //add an if statment to check if the Guide started By the replay tool to the start button
-        //If it was started by the replay button
+        //update the replay codewhen we make a new box
+        this.makeReplayCode()
+
+    };
+
+
+
+//look and the currentguide XML and find the Guidename and Find Guide Name and Guid Version
+//Assumes Current Guide XML has already been Loaded. 
+//Update the Guide object with the found Data.
+    GuideObj.prototype.getGuideInfo = function () {
+        //initialize a Local variable to holde the results of parsing for the Guide Name
+        var guidename = undefined;
+
+        //Pase the current guide XML for the guide name and add it to the local var
+        guidename = this.currentGuideXML.getElementsByTagName('guidename');
+
+        //Check if we have data for the guide name and throw an error if its undefined
+        if (guidename == undefined) { throw "No guide name element was found"; }
+
+
+        //parse the Local for the guide ID atribute and add the Result to object level Varible
+        this.guideID = guidename[0].getAttribute('guideid');
+
+        //check if object level Varible Guide ID variable is no longer "undefind" throw an error if it is
+        if (this.guideID === undefined) { throw "No guide ID Attribute was found"; }
+
+
+        //parse the Local for the guide version atribute and add the Result to object level Varible 
+        this.guideVersion = guidename[0].getAttribute("version");
+
+        //check if object level Varible Guide version variable is no longer "undefind" throw an error if it is
+        if (this.guideVersion == undefined) { throw "No guide Version Attribute was found"; }
+    };
+
+
+
+//update the Guide Replay Box.
+//Will only Trigger if the Guide is not in replay Mode
+//It will output to the Locked Input Box for Replay Code.
+    GuideObj.prototype.makeReplayCode = function () {
+        //Check if the guide is in replay mode, If yes, return False
+        if (this.isReplay === true) { return false; }
+
+        //local variable to hold the string out put to post to the Input box
+        var dispStr = "";
+
+        //intize it with ID of the Guide
+        dispStr += this.guideID;
+
+        //add the verion of the Guide.
+        dispStr += this.guideVersion;
+
+        //Loop through the List of Page Objects in order. 
+        //For Each, Look at the answer Index and add it to the Out Put String
+        for (var i = 0; i < this.pageobjects.length; i++) {
+            //if the value is undefind it means it's the end of the current Tree - Do not add those values
+            if (this.pageobjects[i].answerselected[2] != undefined) { dispStr += this.pageobjects[i].answerselected[2]; }
+        }
+
+        //Set the value of the replay Input Box = to the Temp String. 
+        byid("ReplayCodeBox").value = dispStr;
+
+        //Update the replay code
+        this.replaycode =dispStr;
+        
+    };
+
+
+//Reply a guide that a user has already viewed. 
+//Will not be accessible once a guide has been started. 
+//Requires a Guide reply code in the input box.
+    GuideObj.prototype.loadreplay = function () {
+        //local for holding parsing success/falure
+        var parse_confirm = "";
+
+        //local var for holding the guide name elements. 
+        var guidenames = undefined;
+
+        //Check that Reply code input box has a string in it.
+        if (typeof (this.replayinput.value) != "string") {
+            alert(this.replay_string_missing);
+            return false;
+        }
+
+        //make a object var
+        this.usableinput.string_to_parse = byid("ReplayCodeBox").value;
+
+        //Call parse methode of the parseinput object. Store success/falure
+        parse_confirm = this.usableinput.parse();
+
+        //case the parseparse_confirm for errors and display a message if we get one
+        switch (parse_confirm) {
+            case "empty":
+                alert(this.replay_string_missing);
+                return false;
+
+            case "guidename":
+                alert(this.replay_code_name_missing);
+                return false;
+
+            case "guideVer":
+                alert(this.replay_code_ver_missing);
+                return false;
+
+            case "guidecode":
+                alert(this.replay_code_path_missing);
+                return false;
+
+            default:
+                break;
+        }
+
+        //Load the elements of the guide names 
+        guidenames = this.guideListXML.getElementsByTagName("guidename");
+
+        //loop though guide names elements to find the matching Attibute. 
+        for (var i = 0; i < guidenames.length; i++) {
+            if (guidenames[i].getAttribute("guideid") == this.usableinput.guidename) {
+                //request the load of the current XML
+                loadFile(guidenames[i].getAttribute("guideloc"), this.timout, this.xmlLoadHandler, 4, this)
+                return true;
+            }
+        }
+
+        return false;
 
     };
 
@@ -391,31 +625,31 @@ GuideObj.prototype.start_guide = function () {
 
     //Remove the box
     GuideObj.prototype.remove_box = function (eleToRemove) {
-            //find the old box
-            var old_box = eleToRemove;
+        //find the old box
+        var old_box = eleToRemove;
 
-            //remove old box            
-            var oldelement = byid(old_box.name);
-            oldelement.parentNode.removeChild(oldelement);
+        //remove old box            
+        var oldelement = byid(old_box.name);
+        oldelement.parentNode.removeChild(oldelement);
 
-            //delete current object
-            this.pageobjects.splice(old_box.myindex, 1)
+        //delete current object
+        this.pageobjects.splice(old_box.myindex, 1)
 
-            //if this is not the first element remove prevous element and make it again.
-            if (old_box.myindex != 0) {
-                //find the new box name
-                var newend = this.pageobjects[old_box.myindex - 1].name;
+        //if this is not the first element remove prevous element and make it again.
+        if (old_box.myindex != 0) {
+            //find the new box name
+            var newend = this.pageobjects[old_box.myindex - 1].name;
 
-                //remove new box
-                var newelement = byid(newend);
-                newelement.parentNode.removeChild(newelement);
+            //remove new box
+            var newelement = byid(newend);
+            newelement.parentNode.removeChild(newelement);
 
-                //Delete old object
-                this.pageobjects.splice(old_box.myindex - 1, 1)
+            //Delete old object
+            this.pageobjects.splice(old_box.myindex - 1, 1)
 
-                //remake new end
-                this.make_guide_ele(newend);
-            } else {
+            //remake new end
+            this.make_guide_ele(newend);
+        } else {
 
             //show the start button 
             byid("start_button").setAttribute("style", "display: initial");
@@ -423,11 +657,9 @@ GuideObj.prototype.start_guide = function () {
             //Show the Guide Repete Button
             byid("ReplayCode_submit").setAttribute("style", "display: initial");
 
-            //enable the guide Input box for use. 
-             byid("ReplayCodeBox").disabled = false;
-
-            }
-
+            //Empty the Reply box when we Delet the Last Box
+            byid("ReplayCodeBox").value = "";
+        }
     };
 
 
@@ -471,21 +703,40 @@ GuideObj.prototype.start_guide = function () {
         //assign object variables 
         this.name = my_element_name_in; //this objects name and This elements name in XML	
 
-        this.mainPage_object = mainPage_object_in; //main Page reference
-
         this.myindex = arrayindex; //My Place in Page list array
 
-        this.classname = classin; //class use to define this type of object
+        this.classname = "guide_element"; //class use to define this type of object
 
-        this.answerbuttons = new Array(); // List of answer buttons
-        this.answerselected = new Array(); //[0] is ID [1] is answer Text
-        this.defultNoAnswewr = "Thank you for using the Helpdesk Guide System";
+        //Referance to the main page object
+        this.mainPage_object = mainPage_object_in;
+
+        //---Container Variables---//
+ 
+        //Div for the Guide element to display its content.
+        //(ID: this.name Class: "guide_element") 
+        this.guide_element = undefined;
+
+        //Div that holds this elements question.
+        //(ID:this.name + '_question_space' Class: this.classname + '_qspace')
+        this.questionSpace = undefined;
+
+        //Div to seperat the space that holds the answers.
+        //(ID:this.name + '_aswer_space' Class: this.classname + '_aswer_space') 
+        this.aswerSpace = undefined;
+
+        //Array of Divs describs the buttons.
+        //(ID:this.name + '_abutton' + i Class: this.classname + '_answerbutton") 
+        this.answerbuttons = new Array();
+
+        //-------------------------//
+
+
+       
+        this.answerselected = new Array(); //[0] is ID [1] is answer Text [2] Index is the of the answer
+        //this.defultNoAnswewr = "Thank you for using the Helpdesk Guide System";
 
         this.question = "";
 
-        this.bbox = undefined;
-        this.questionSpace = undefined;
-        this.aswerSpace = undefined;
 
         this.isdeleted = false;
 
@@ -497,7 +748,7 @@ GuideObj.prototype.start_guide = function () {
         this.make_guide_ele_disp();
 
         //Assign the event handler for the all buttons. The event handler is tide to the box overall frame 
-        this.bbox.addEventListener("click", this, true);
+        this.guide_element.addEventListener("click", this, true);
 
 
         //Load the Question to the question Frame
@@ -517,7 +768,7 @@ GuideObj.prototype.start_guide = function () {
             if (event.type != "click") { return false }
 
             //check if what was clicked is an answer button - if it was, call the function for handling making the next element. 
-            if (event.target.className == this.classname + '_answerbutton') { this.answerClicked(event); }
+            if (event.target.className == this.classname + '_answerbutton') { this.answerClicked(event.target); }
 
             //check if what was clicked is a remove button - if it was, call the remove function of the main page object this  object
             if (event.target.className == "removecss") { this.mainPage_object.remove_box(this); }
@@ -529,40 +780,31 @@ GuideObj.prototype.start_guide = function () {
 }
 
 
-Guide_ele.prototype.make_guide_ele_disp = function(){
+Guide_ele.prototype.make_guide_ele_disp = function () {
 
-        //make the main box
-        this.mainPage_object.pagespace.innerHTML += '<div class="' + this.classname + '" id="' + this.name + '"></div>';
+    //make the main box
+    this.guide_element = makeDiv(this.mainPage_object.pagespace, this.name, this.classname);
 
-        //assign the main box Var to the Live element on the page
-        this.bbox = byid(this.name);
+    //make and draw the remove button
+    this.guide_element.innerHTML += '<input type="button"; value="X"; class="removecss" id="' + this.name + '_remove"></input>';
 
-        //make and draw the remove button
-        this.bbox.innerHTML += '<input type="button"; value="X"; class="removecss" id="' + this.name + '_remove"></input>';
+    //make and draw the Reset button
+    this.guide_element.innerHTML += '<input type="button"; value="Reset"; class="resetbutton" id="' + this.name + '_resetbutton"></input>';
 
-        //make and draw the Reset button
-        this.bbox.innerHTML += '<input type="button"; value="Reset"; class="resetbutton" id="' + this.name + '_resetbutton"></input>';
+    //make Question Space of the Box
+    this.questionSpace = makeDiv(this.guide_element, this.name + '_question_space', this.classname + '_qspace',this.question);
 
-        //make Question Space of the Box
-        this.bbox.innerHTML += '<div class="' + this.classname + '_qspace" id=' + this.name + '_question_space></div>';
+    //separate the question and answer spaces
+    this.guide_element.innerHTML += '<br>';
 
-        //separate the question and answer spaces
-        this.bbox.innerHTML += '<br>';
-
-        //Make the Answer Space of the Box
-        this.bbox.innerHTML += '<div id=' + this.name + '_aswer_space></div>';
-
-        //Load the Question space var
-        this.questionSpace = byid(this.name + '_question_space');
-
-        //Update the 
-        this.aswerSpace = byid(this.name + '_aswer_space');
+    //Make the Answer Space of the Box
+    this.aswerSpace = makeDiv(this.guide_element, this.name + '_aswer_space', this.classname + '_aswer_space');
 
 }
 
 
-    //parse XML for information
-    //get Question text from XML
+//parse XML for information
+//get Question text from XML
 Guide_ele.prototype.getquestion = function (ele_to_find) {
 
             //Load a Temp Var with the Parsed Result of looking through the current XML for element to Search for. 
@@ -582,66 +824,71 @@ Guide_ele.prototype.getquestion = function (ele_to_find) {
 }
 
 
-            //add buttons to the Answer Space
+//add buttons to the Answer Space
 Guide_ele.prototype.makeAnswerbuttons = function () {
 
-                //Get the Current Loaded XML from the Main Page Object. Parse it for answers and Load it in to a Temp Var
-                var x = this.mainPage_object.currentGuideXML.getElementsByTagName('answer');
+    //Get the Current Loaded XML from the Main Page Object. Parse it for answers and Load it in to a Temp Var
+    var x = this.mainPage_object.currentGuideXML.getElementsByTagName('answer');
 
-                //Look through the list of answers to find the answers for this element.
-                for (var i = 0; i < x.length; i++) {
+    //Look through the list of answers to find the answers for this element.
+    for (var i = 0; i < x.length; i++) {
 
-                    //Look at each anwser element and see if it belongs to this element. If it does, make the button for it
-                    if (x[i].parentNode.getAttribute('elname') == this.name) {
+        //Look at each anwser element and see if it belongs to this element. If it does, make the button for it
+        if (x[i].parentNode.getAttribute('elname') == this.name) {
 
-                        //Load the answer Text into a temp var
-                        var answertext = x[i].childNodes[0].nodeValue;
+            //Load the answer Text into a temp var
+            var answertext = x[i].childNodes[0].nodeValue;
 
-                        //Load the target for the next element from into a temp Var
-                        var answertarget = x[i].getAttribute('atarget')
+            //Load the target for the next element from into a temp Var
+            var answertarget = x[i].getAttribute('atarget')
 
-                        //make a temp Var for the name of the button
-                        var mydivid = this.name + '_abutton' + i;
+            //make a temp Var for the name of the button
+            var mydivid = this.name + '_abutton' + i;
 
-                        //make the button with the loaded temp vars
-                        this.aswerSpace.innerHTML += '<div class="' + this.classname + '_answerbutton" id="' + mydivid + '" data-atarget="' + answertarget + '">' + answertext + '</div>';
+            //make the button with the loaded temp vars
+            this.answerbuttons.push(makeDiv(this.aswerSpace, mydivid, this.classname + '_answerbutton', answertext))
 
-                        //add this button to an array of buttons in the object for referance later.
-                        this.answerbuttons.push(byid(mydivid));
-
-                    }
-                }
-                //if the element has no Answers then display the end info in the Answer section 
-                if (this.answerbuttons.length == 0) {
-                    this.aswerSpace.innerHTML += this.defultNoAnswewr;
-                }
+            //add the atarget to the button for use when seleted. 
+            this.answerbuttons[this.answerbuttons.length -1].setAttribute("data-atarget", answertarget);
+        }
+    }
+    //if the element has no Answers then display the end info in the Answer section 
+    if (this.answerbuttons.length == 0) {
+        this.aswerSpace.innerHTML += this.mainPage_object.NoAnswewr;
+    }
 
 }
 
 
-Guide_ele.prototype.answerClicked = function(event){
-                //make close Box disappear
-                byid(this.name + '_remove').setAttribute("style", "display: none");
+Guide_ele.prototype.answerClicked = function (target) {
+    //make close Box disappear
+    byid(this.name + '_remove').setAttribute("style", "display: none");
 
-                byid(this.name + '_resetbutton').setAttribute("style", "display: none");
+    byid(this.name + '_resetbutton').setAttribute("style", "display: none");
 
-                //change the class for the clicked button so we can make it look different
-                event.target.className = this.classname + "_answerbutton_selected";
+    //change the class for the clicked button so we can make it look different
+    target.className = this.classname + "_answerbutton_selected";
 
 
-                //go though the list of answer boxes and make all none clicked disappear
-                for (var i = 0; i < this.answerbuttons.length; i++) {
-                    if (byid(this.answerbuttons[i].id).className == this.classname + '_answerbutton') {
-                        byid(this.answerbuttons[i].id).setAttribute("style", "display: none");
-                    }
-                }
+    //go though the list of answer boxes and make all none clicked disappear
+    //Look for the ID of the Selected answer and store it. 
+    for (var i = 0; i < this.answerbuttons.length; i++) {
+        //Once we find the answer selected store its ID
+        if (byid(this.answerbuttons[i].id).className == this.classname + "_answerbutton_selected") {
+            this.answerselected[2] = i;
+        }
+       //For everything that is not teh answer seleted set its display to none
+        else {
+            byid(this.answerbuttons[i].id).setAttribute("style", "display: none"); 
+        }
+    }
 
-                //put the name of the answer selected in the object
-                this.answerselected[0] = event.target.id;
-                this.answerselected[1] = event.target.innerHTML;
+    //put the name of the answer selected in the object
+    this.answerselected[0] = target.id;
+    this.answerselected[1] = target.innerHTML;
 
-                //Trigger the Creation of the Next element
-                this.mainPage_object.make_guide_ele(event.target.getAttribute('data-atarget'));
+    //Trigger the Creation of the Next element
+    this.mainPage_object.make_guide_ele(target.getAttribute('data-atarget'));
 
 
 }
@@ -651,10 +898,64 @@ Guide_ele.prototype.answerClicked = function(event){
 ////-----------------------////
 
 
+/// Replay Guide object///
+///--------------------///
+
+var Parseinput = function () {
+    //guide var to hold the starting string
+    this.string_to_parse = "";
+    //guide var to hold the Parsed Guide name.
+    this.guidename = "";
+    //guide var to hold Parsed Guide Version.
+    this.guideVer = "";
+    //guide Var to hold Parsed Guide Code.
+    this.guidecode = "";
+}
 
 
+//Parse input box. 
+//First 2 are guide name
+//Next find the . One after the. is the end of the version.
+//All other numbers are the guide path.
+//Will error out if any part is missing or not the format.
+Parseinput.prototype.parse = function () {
+    //local var to hold position of the . in the str
+    var decpos = -1;
 
+	//Check if input box has provided any content
+	if (this.string_to_parse == undefined || this.string_to_parse == "") { return "empty"; }
+	
+	
+    //Load the Guide name
+    this.guidename = this.string_to_parse.slice(0, 2);
 
+    //if Check if the guide name parse failed, return with just the name of the parse that failed. 
+    if (this.guidename == undefined || this.guidename == ""|| this.guidename.length  != 2) { return "guidename"; }
+
+    //update the string to remove the Guide name
+    this.string_to_parse = this.string_to_parse.slice(2);
+
+    //get the position of the . in the str
+    decpos = this.string_to_parse.indexOf('.');
+	
+    //Load the guide version
+    this.guideVer = this.string_to_parse.slice(0, decpos + 2);
+
+    //if Check if the guide version parse failed, return with just the name of the parse that failed.
+    if (this.guideVer == undefined || this.guideVer == "" || decpos == -1 || this.guideVer.length < 3) { return "guideVer"; }
+
+    //update the string to remove the Guide Version.
+    this.guidecode = this.string_to_parse.slice(decpos + 2);
+
+    //Check that the remaining string is a number. If it is not, return with just the name of the parse that failed.
+    if (this.guidecode == undefined || Number(this.guidecode) == "NaN") { return "guidecode"; }
+
+    //at the end return True for success. 
+    return true;
+};
+
+/// Replay Guide object///
+///--------------------///
 
 
 

@@ -47,6 +47,17 @@ Configure the XMLhttpRequest to be Asynchronous with a timeout
 Add an Ascyncronaus function to check the stat of the timeout and fire a callback error on timeout failed.
 *****************************/
 
+/***************************** Done
+Update Copy Guide to throw a user error when its activated with no content.
+*****************************/
+
+/***************************** Done
+add a function that displays the list of Node Hit
+    Make a Input Box that will display the results by defult in the Header
+    Use a Loop to Look through Page objects and find 
+    have this function update perodicly  (on creat and on remove)
+
+*****************************/
 
 ----------------------In Progress--------------------------
 
@@ -56,16 +67,15 @@ Manage errors with a Basic error function. Manage handled errors to report troub
     Try Catch should be on the main unput only. 
 
 Update Copy Guide have the button Not display when the Guide us not active.
-Update Copy Guide to throw a user error when its activated with no content.
+
 
 
 /*****************************/
 Functionality to display a code for the Nodes hit by user and to enter code to re trace the nodes. 
 
-add a function that displays the list of Node Hit
-    Make a Input Box that will display the results by defult in the Header
-    Use a Loop to Look through Page objects and find 
-    have this function update perodicly  (on creat and on remove)
+/*****************************/
+Go back through the code and have all divs made by a Function and store the Div ID in a var
+
 
 add a function that looks at the Input Box with the List of Nodes and recreats the Layout Based on the List.
 

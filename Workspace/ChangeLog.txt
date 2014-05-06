@@ -1,0 +1,83 @@
+2014-04-07:
+1. Removed All try catches on all None-input function
+
+2014-04-08:
+1. removed links to all errors by codes
+2. added an object call Timeoutobj. currently has a place for max time and an counter
+
+2014-04-09:
+1. added animation to timeout
+2. added funtion to stop timer for timeout 
+
+2014-04-10:
+1. Added function activating guide that loads the intital XML Asynchronous
+2. added an Asynchronous XML loader.
+3. added a fundtion used as a callback to the XML loader for loadind the XML. it calls the guide disply function.
+4. Note: this has only been added to the first XML call and is not working form more then one call at a time
+
+2014-04-13:
+1. Updated the Asynchronous XML loader to alow for a callback with anynumber of args.
+2. Tested the new XML loader to proce it works with more then one XML Reqest at a time.
+3. The new Asynchronous XML loader has a built in Time out tool in it.
+
+2014-04-14:
+1. removed the custome timeout function to support better compatiblity. 
+
+2014-04-16:
+1. added Varible to Hold Timeout Time and XML COnFix file
+2. Added a Case for Loading files for Current Guide XML (3) and Confix XML (1)
+
+2014-04-17:
+1. Add a function to Check for what is selected then Call the Asynchronous Load
+2. Remove the XML Load from Start Guide and Made it the Callback for the Current Guide XML (3) Load.
+
+2014-04-20:
+1. added an input box with a Lable for adding the Guide Code
+2. Added functionality to Hide the Launch button for the Guide code Box once a Guide has run. 
+3. Added functionality to Disable the Guide code Input box once a guide has Launched. 
+4. Add functionality to reset these tools to their defult state
+5. Changed the Remove function to not Remove and Readd the start Button but to Un-hide it. 
+
+2014-04-23:
+1. Updated the function for answer selected to update the answer seletced Var with the Index of the selected answer. 
+
+2014-04-24:
+1. Added A retuine to update the Guide Element Obj with the Index of the answer.
+2. Added an object level varable to state if the guide is in Replay mode or not
+3. Added an object level Varible that store the Name of the Guide
+4. Added an object level Varible that stores the Version of the Guide
+5. Update Guide Name Variable to be Guide ID. 
+6. Updated XML format to add Attributes in the name for Guide ID and Guide Version. 
+7. Added a function for updating the Object level variables of Guide ID and Guide Version.
+8. Added a call to the function for updating the Object Level varibles in when the guide is started.
+9. Added a Variabled to hold the ReplayCode box 
+10. Added a function to update the Replay input box with the Replay code for the current Guide.
+11. updated the remove function to Clear out the Replay box when the last Guide Lelment is Removed. 
+12. Added a variable to Hold the Replay code.
+13. Add a retune to display the Replay code at when an end Node is Hit. 
+
+2014-04-27:
+1. Add and tested a function to Make Divs (Next Step is to go Back through all code and have all Divs Made this way
+    and store their them in Object level variables. In this process I will be finding all User displayed Text and 
+    changing that to be linked to object level varables. 
+
+2014-04-30:
+1. Updated make_guide_display to have all Divs Made with the Make Div function. 
+2. New variables added to help with standarization for make_guide_display.
+3. All user Displaied Text in make_guide_display is hosted in a Variable. 
+
+2014-05-01:
+1.Updated CSS to make guide more readable. 
+
+2014-05-04:
+1. Finished updating all Functions to make all Divs with MakeDiv.
+2. Normailed CSS names. 
+3. Updated the Click even handler to Process the target into an HTML object of the target.
+4. Updated the even function for asnwer to accept the an HTML object of the target.
+
+2014-05-05:
+1. Add Configurable variables for the User errors realated to invalied input.
+2. Added an Object that holds the Parsed Replay Guide input.
+3. Added a Function to parse Guide input.
+4. Added function to look at the Replay input and parse the data. The Load the Guide by found Guide Name.
+5. Added a case for Loading the XML from the with the Replay code. 

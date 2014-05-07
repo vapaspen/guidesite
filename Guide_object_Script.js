@@ -179,6 +179,15 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
     //Replay code Missing or improperly formated Path Code
     this.replay_code_path_missing = "Guide code not propely formated. Please reenter the guide code.";
 
+    //Replay Guide Code Verion Unusable
+    this.replay_code_ver_unusable = "The Guide code entered is based on a different verion of the guide then currently available. Unfortunately we can not replay this guide code. Please use the guides system again from the beginning."
+
+    //Replay Guide Code Verion Warning
+    this.replay_code_ver_warning = "The Guide code entered is based on a different verion of the guide then currently available. You can continue, but the guide may not display correctly."
+
+    //Replay Guide Path Not Valided
+    this.replay_code_path_unusable = "The Guide code entered not valid. Please check the code and try again."
+
     //---------------------------------//
 
     //Object to hold the parsed Input 
@@ -311,7 +320,7 @@ GuideObj.prototype.handleEvent = function (event) {
             //If Load ID is 4 Sent the Current XML and Run the Replay.!!!! Currently a stub  
             case 4:
                 objref.currentGuideXML = XML_in;
-                alert(loadID);
+                objref.replayGuide();
                 break;
 
             //Return false of this is called with a Load ID that is not listed  
@@ -622,6 +631,101 @@ GuideObj.prototype.start_guide = function () {
     };
 
 
+    
+    //Once the XML is Loaded start the Replay
+    //Requires Current guide XML be Loaded
+    //Will Replay the Guide the based on the guide Code
+    GuideObj.prototype.replayGuide = function () {
+        //Flage we are doing a Replay
+        this.isReplay = true;
+
+        //Local variable to hold the Parsed XML.
+        var parsedXML = undefined;
+
+        //local to hold parsed Guidename
+        var parsed_guidename = undefined;
+
+        //Local var for parces guide Version
+        var parsed_gude_ver = undefined;
+
+        //local for holding the first element 
+        var firstelement = undefined;
+
+        //local variable to hold the working element.
+        var working_ele = undefined;
+
+        //Local Var for confriming decmal is found
+        var dec_found = false;
+
+
+
+        //Check if Current Guide XML is empty (if it is Thow an error)
+        if (this.currentGuideXML == null || this.currentGuideXML == undefined) { throw "currentGuideXML Empty" }
+
+        //Parse Guide name
+        parsed_guidename = this.currentGuideXML.getElementsByTagName("guidename");
+
+        //Get the Guide version
+        parsed_gude_ver = parsed_guidename[0].getAttribute("version");
+
+        //Check Guide Version, If verion is Bad Send user a messsage.
+        //let user try if verion difference is only a decmal difference. (try with a warning)
+        for (i = 0; i < this.usableinput.guideVer.length; i++) {
+            //check if each char in the string is the same until the . is hit
+            if (this.usableinput.guideVer[i] != parsed_gude_ver[i] && dec_found == false) {
+                //send user a message that the version is bad and return false on function
+                alert(this.replay_code_ver_unusable);
+                return false;
+            }
+
+            //when . is found set the flag 
+            if (this.usableinput.guideVer[i] == parsed_gude_ver[i] && this.usableinput.guideVer[i] == ".") { dec_found = true; }
+
+            //Check the last chars if they are not the same sed a Warning. 
+            if (this.usableinput.guideVer[i] != parsed_gude_ver[i] && dec_found == true) { alert(this.replay_code_ver_warning); }
+
+        }
+
+        //Parse the Current Guide XML for the elements and Load the Local
+
+        parsedXML = this.currentGuideXML.getElementsByTagName('element');
+
+        //Load the firstelement with the first Node in the list. 
+        firstelement = parsedXML[0].getAttribute('elname');
+
+        //Start the guide by its first element 
+        this.make_guide_ele(firstelement);
+
+        //hide the start button once the its been used so it can not me triggered again. 
+        byid("start_button").setAttribute("style", "display: none");
+
+        //Hide the Launch button for the Guide Repete function. 
+        byid("ReplayCode_submit").setAttribute("style", "display: none");
+
+        //for each element of the guide code string do the following:
+        //get and store the HTML object that matches the index of the current string index to number.
+        //Run the answer selected function passing the HTML object as the selected target.
+        //If an element is not found, Throw an error that the Guide code is not correct and Reload the Page.
+        for (i = 0; i < this.usableinput.guidecode.length; i++) {
+            //current index
+            var v = Number(this.usableinput.guidecode[i]);
+
+            //check if answer button can be found
+            if (v + 1 > this.pageobjects[i].answerbuttons.length) {
+                //send user a message that the Path is bad and return false on function
+                alert(this.replay_code_path_unusable);
+                location.reload();
+            }
+
+            //Find the Next element 
+            working_ele = this.pageobjects[i].answerbuttons[v];
+
+            //call the next element to be built. 
+            this.pageobjects[i].answerClicked(working_ele);
+        }
+
+    };
+
 
     //Remove the box
     GuideObj.prototype.remove_box = function (eleToRemove) {
@@ -733,7 +837,7 @@ GuideObj.prototype.start_guide = function () {
 
        
         this.answerselected = new Array(); //[0] is ID [1] is answer Text [2] Index is the of the answer
-        //this.defultNoAnswewr = "Thank you for using the Helpdesk Guide System";
+        
 
         this.question = "";
 
@@ -877,9 +981,9 @@ Guide_ele.prototype.answerClicked = function (target) {
         if (byid(this.answerbuttons[i].id).className == this.classname + "_answerbutton_selected") {
             this.answerselected[2] = i;
         }
-       //For everything that is not teh answer seleted set its display to none
+        //For everything that is not teh answer seleted set its display to none
         else {
-            byid(this.answerbuttons[i].id).setAttribute("style", "display: none"); 
+            byid(this.answerbuttons[i].id).setAttribute("style", "display: none");
         }
     }
 

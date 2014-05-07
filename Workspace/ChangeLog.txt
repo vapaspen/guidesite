@@ -81,3 +81,8 @@
 3. Added a Function to parse Guide input.
 4. Added function to look at the Replay input and parse the data. The Load the Guide by found Guide Name.
 5. Added a case for Loading the XML from the with the Replay code. 
+
+2014-05-06:
+1. Made new Road Map with Template.
+2. Variable to hold Usermessages: Guide version (Both can't go on an warning).
+3. Variable to hold Usermessage: Guide Path Not valid.

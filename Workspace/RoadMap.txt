@@ -1,0 +1,59 @@
+------------------------------------Template------------------------------------
+--------------------------------------------------------------------------------
+NAME:  
+
+STATUS: 
+
+Proity: 
+
+PREREQUISITES: 
+    STATUS:  
+
+DISCRIPTION: 
+
+    PRECONDITION:
+
+    POSTCONDITION:
+
+NEEDED BY:
+
+NOTES:
+
+--------------------------------------------------------------------------------
+
+-------------------------------------legend-------------------------------------
+
+Status:
+    Road: On the Road Map
+    Defining: On the work space getting its definations
+    Coading: On the work space getting its code
+    Testing: Testing that It works. 
+    Deployed: Its Proven to Work hand has been deployed.
+    Updating: Updating code that has already been deployed
+  
+
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+NAME: Replay guide function 
+
+STATUS: Coading 
+
+Proity: High
+
+PREREQUISITES: Replay Guide XML Load and Replay guide code creation
+    STATUS: Deployed 
+
+DISCRIPTION: Function to Make the Guide elements based on Guide code path
+
+    PRECONDITION: Guide code has already been parsed into object and current Guide is Loaded. 
+
+    POSTCONDITION: Guide is fulled displaied based on Guide Path
+
+NEEDED BY: Presentation with Helpdesk Management 
+
+NOTES: Checks user input and will reload page if an error is found. Will also Present an error to the User. 
+
+--------------------------------------------------------------------------------
+
+

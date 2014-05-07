@@ -89,3 +89,7 @@
 4. updated the clicked function to account for changes in current element context
 5. added Function to Replay the Guide
 6. Begain Testing on Guide Replay system (Current known Bugs. No error is displayed when a guide is entered with an invaled Guid ID)
+
+2014-05-07:
+1. Updated ByID to accept HTML Obj and throw corrected errors
+2. Added ByID loading to most innerHTML functions. (byid needs to be added to any case that Make div was not called in the same function.) 

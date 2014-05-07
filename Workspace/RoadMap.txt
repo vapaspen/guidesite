@@ -37,7 +37,7 @@ Status:
 --------------------------------------------------------------------------------
 NAME: Replay guide function 
 
-STATUS: Coading 
+STATUS: testing
 
 Proity: High
 
@@ -53,6 +53,28 @@ DISCRIPTION: Function to Make the Guide elements based on Guide code path
 NEEDED BY: Presentation with Helpdesk Management 
 
 NOTES: Checks user input and will reload page if an error is found. Will also Present an error to the User. 
+
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+NAME: Update Documentdtation and add By ID 
+
+STATUS: Road Map
+
+Proity: High
+
+PREREQUISITES: By ID updated to alow for HTML objects as Args
+    STATUS:  deployed
+
+DISCRIPTION: Update all functions with a list of all Divs made in that function. Then update all functions to use byid on any HTML referance no created in that object. 
+
+    PRECONDITION: all functinos as they currently are
+
+    POSTCONDITION:
+
+NEEDED BY:
+
+NOTES:
 
 --------------------------------------------------------------------------------
 

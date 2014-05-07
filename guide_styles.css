@@ -1,8 +1,10 @@
-/* CSS for the analytics Demo Display Box. It is being displayed on the right */
-.analytics
+
+/* The main box the Guide Runs in. It doesn't need to have any of these features  */
+.guide_area
 {
-float:right;
+padding:10px 10px;
 }
+
 
 /*----Heading CSS----*/
 /*-------------------*/
@@ -34,20 +36,17 @@ border-radius:25px;
 
 
 /*Replay Container*/
+/*Css to have the box that displays HD guide code on the right.*/
 .ReplayCodeBox
 {
-    
+float:right;  
 }
 
 /*----Heading CSS----*/
 /*-------------------*/
 
-/* The main box the Guide Runs in. It doesn't need to have any of these features  */
-.guide_area
-{
-padding:10px 10px;
-}
-
+/*----element CSS----*/
+/*-------------------*/
 /* CSS for the guide elements. margin auto is to center the box.  old color */
 .guide_element
 {
@@ -76,8 +75,15 @@ border-radius:25px;
 -moz-box-shadow: 0 10px 6px -6px #777;
 box-shadow: 0 10px 6px -6px #777;
 }
+/*----element CSS----*/
+/*-------------------*/
 
-/* CSS for the Answer buttons. display: inline-block helps to Line up the answer disply  */
+/*---------buttons---------*/
+/*-------------------------*/
+
+
+/*--Answer Button--*/
+/*Has an active and a seleted Mode */
 .guide_element_answerbutton
 {
 color: #fbf4f4;
@@ -93,41 +99,78 @@ cursor: pointer;
 box-shadow: 0 10px 6px -6px #777;
 }
 
-.guide_element_answerbutton:active
-{
-background:#084E2E;    
-}
+    .guide_element_answerbutton:active
+    {
+    background:#084E2E;    
+    }
 
-/* CSS for the Selected Answer. This just changing the color right now.  */
-.guide_element_answerbutton_selected
-{
-color: #fbf4f4;
-color: #fbf4f4;
-border:2px solid #a1a1a1;
-padding:5px;
-background:#084E2E;
-border-radius:25px;
-display: inline-block;
+    /* CSS for the Selected Answer. This just changing the color right now.  */
+    .guide_element_answerbutton_selected
+    {
+    color: #fbf4f4;
+    color: #fbf4f4;
+    border:2px solid #a1a1a1;
+    padding:5px;
+    background:#084E2E;
+    border-radius:25px;
+    display: inline-block;
 
--webkit-box-shadow: 0 10px 6px -6px #777;
--moz-box-shadow: 0 10px 6px -6px #777;
-box-shadow: 0 10px 6px -6px #777;
-}
+    -webkit-box-shadow: 0 10px 6px -6px #777;
+    -moz-box-shadow: 0 10px 6px -6px #777;
+    box-shadow: 0 10px 6px -6px #777;
+    }
+/*--Answer Button--*/
+/*-----------------*/
 
-/* CSS for Remove element buttons. Set it to display on the right side.*/
+
+/*--remove button--*/
+/*has a active mode*/
 .removecss
 {
 float:right;
 }
+/*--remove button--*/
+/*-----------------*/
 
-/*Css to have the box that displays HD guide code on the right.*/
-.ReplayCodeBox
-{
-float:right;  
-}
 
+/*--copy button--*/
+/*has a active mode*/
 .copybutton
 {
 
 }
+/*--copy button--*/
+/*---------------*/
+
+
+/*--Reload button--*/
+/*has a active mode*/
+
+/*--Reload button--*/
+/*-----------------*/
+
+
+/*--Launch button--*/
+/*has a active mode*/
+
+/*--Launch button--*/
+/*-----------------*/
+
+
+/*--start button--*/
+/*has a active mode*/
+
+
+/*--start button--*/
+/*-----------------*/
+
+/*---------buttons---------*/
+/*-------------------------*/
+
+
+
+
+
+
+
 

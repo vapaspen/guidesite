@@ -1,18 +1,31 @@
 //David Guides Assistances Site.
 
 //Shorthand to make make typying document.getElementById quicker
-//needs a string as Input and assumes the element already exist
+//needs a string or HTML obj as Input and assumes the element already exist
 //returns the ID of the element as a HTML object type. 
 function byid(idname) {
+    //String of ID
+    var working_ID = "";
 
     //check if input is a string
-    if(typeof(idname) != "string"){throw "byID Error. Not type String";}
+    if(typeof(idname) == "string")
+    {
+        working_ID = idname;
+    }else{
+        try{
+            working_ID = idname.id;
+        }
+        catch(e)
+        {throw "byID Error. Not type String Or HTML ObJ";}
+    }
+        
+    
 
     //get the Element 
-    var element = document.getElementById(idname);
+    var element = document.getElementById(working_ID);
 
     // throw ID undefind if ID is not found
-    if(element == undefined){throw idname + " ID undefined";} 
+    if(element == undefined){throw working_ID + " ID undefined";} 
 
     //Retrun the found element 
     return element;
@@ -56,7 +69,7 @@ makeDiv = function (location, id, class_in, text_in) {
     outputstring += '</div>';
 	
     //Push the string into the incertlocation to make the new Div
-	incertlocation.innerHTML += outputstring;
+	byid(incertlocation).innerHTML += outputstring;
 
 
     //Retun when done by sending back a reference to the Div we made. (HTML Object)
@@ -965,7 +978,7 @@ Guide_ele.prototype.makeAnswerbuttons = function () {
     }
     //if the element has no Answers then display the end info in the Answer section 
     if (this.answerbuttons.length == 0) {
-        this.aswerSpace.innerHTML += this.mainPage_object.NoAnswewr;
+        byid(this.aswerSpace).innerHTML += this.mainPage_object.NoAnswewr;
     }
 
 }
@@ -978,7 +991,7 @@ Guide_ele.prototype.answerClicked = function (target) {
     byid(this.name + '_resetbutton').setAttribute("style", "display: none");
 
     //change the class for the clicked button so we can make it look different
-    byid(target.id).className = this.classname + "_answerbutton_selected";
+    byid(target).className = this.classname + "_answerbutton_selected";
 
 
     //go though the list of answer boxes and make all none clicked disappear
@@ -999,12 +1012,12 @@ Guide_ele.prototype.answerClicked = function (target) {
     }
 
     //put the name of the answer selected in the object
-    this.answerselected.id = target.id;
-    this.answerselected.answer_Text = target.innerHTML;
+    this.answerselected.id = byid(target).id;
+    this.answerselected.answer_Text = byid(target).innerHTML;
 
 
     //Trigger the Creation of the Next element
-    this.mainPage_object.make_guide_ele(target.getAttribute('data-atarget'));
+    this.mainPage_object.make_guide_ele(byid(target).getAttribute('data-atarget'));
 
 
 }

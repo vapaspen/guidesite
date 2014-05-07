@@ -556,9 +556,9 @@ GuideObj.prototype.start_guide = function () {
 
         //Loop through the List of Page Objects in order. 
         //For Each, Look at the answer Index and add it to the Out Put String
-        for (var i = 0; i < this.pageobjects.length; i++) {
+        for (var s = 0; s < this.pageobjects.length; s++) {
             //if the value is undefind it means it's the end of the current Tree - Do not add those values
-            if (this.pageobjects[i].answerselected[2] != undefined) { dispStr += this.pageobjects[i].answerselected[2]; }
+            if (this.pageobjects[s].answerselected.index_of_ans != undefined) { dispStr += this.pageobjects[s].answerselected.index_of_ans; }
         }
 
         //Set the value of the replay Input Box = to the Temp String. 
@@ -706,22 +706,22 @@ GuideObj.prototype.start_guide = function () {
         //get and store the HTML object that matches the index of the current string index to number.
         //Run the answer selected function passing the HTML object as the selected target.
         //If an element is not found, Throw an error that the Guide code is not correct and Reload the Page.
-        for (i = 0; i < this.usableinput.guidecode.length; i++) {
+        for (t = 0; t < this.usableinput.guidecode.length; t++) {
             //current index
-            var v = Number(this.usableinput.guidecode[i]);
+            var v = Number(this.usableinput.guidecode[t]);
 
             //check if answer button can be found
-            if (v + 1 > this.pageobjects[i].answerbuttons.length) {
+            if (v + 1 > this.pageobjects[t].answerbuttons.length) {
                 //send user a message that the Path is bad and return false on function
                 alert(this.replay_code_path_unusable);
                 location.reload();
             }
 
             //Find the Next element 
-            working_ele = this.pageobjects[i].answerbuttons[v];
+            working_ele = this.pageobjects[t].answerbuttons[v];
 
             //call the next element to be built. 
-            this.pageobjects[i].answerClicked(working_ele);
+            this.pageobjects[t].answerClicked(working_ele);
         }
 
     };
@@ -778,8 +778,8 @@ GuideObj.prototype.start_guide = function () {
                     out_put_text += "Question: " + this.pageobjects[i].question + "<br>";
 
                     //get the Answer element and add it to the copy
-                    if (this.pageobjects[i].answerselected[1] != undefined) {
-                        out_put_text += "Answer:  " + this.pageobjects[i].answerselected[1].trim() + "  ";
+                    if (this.pageobjects[i].answerselected.id != undefined) {
+                        out_put_text += "Answer:  " + this.pageobjects[i].answerselected.id.trim() + "  ";
                     }
                     out_put_text += "<br><br>";
                 }
@@ -815,7 +815,7 @@ GuideObj.prototype.start_guide = function () {
         this.mainPage_object = mainPage_object_in;
 
         //---Container Variables---//
- 
+
         //Div for the Guide element to display its content.
         //(ID: this.name Class: "guide_element") 
         this.guide_element = undefined;
@@ -835,9 +835,16 @@ GuideObj.prototype.start_guide = function () {
         //-------------------------//
 
 
-       
-        this.answerselected = new Array(); //[0] is ID [1] is answer Text [2] Index is the of the answer
-        
+
+        //this.answerselected = new Array(); //[0] is ID [1] is answer Text [2] Index is the of the answer
+
+
+        this.answerselected = {
+            id: undefined,
+            answer_Text: undefined,
+            index_of_ans: undefined
+        };
+
 
         this.question = "";
 
@@ -971,25 +978,30 @@ Guide_ele.prototype.answerClicked = function (target) {
     byid(this.name + '_resetbutton').setAttribute("style", "display: none");
 
     //change the class for the clicked button so we can make it look different
-    target.className = this.classname + "_answerbutton_selected";
+    byid(target.id).className = this.classname + "_answerbutton_selected";
 
 
     //go though the list of answer boxes and make all none clicked disappear
     //Look for the ID of the Selected answer and store it. 
     for (var i = 0; i < this.answerbuttons.length; i++) {
+        //local for the current button element
+        var current_ele = byid(this.answerbuttons[i].id)
+
         //Once we find the answer selected store its ID
-        if (byid(this.answerbuttons[i].id).className == this.classname + "_answerbutton_selected") {
-            this.answerselected[2] = i;
+        if (current_ele.className == this.classname + "_answerbutton_selected") {
+            this.answerselected.index_of_ans = i;
+
         }
         //For everything that is not teh answer seleted set its display to none
         else {
-            byid(this.answerbuttons[i].id).setAttribute("style", "display: none");
+            current_ele.setAttribute("style", "display: none");
         }
     }
 
     //put the name of the answer selected in the object
-    this.answerselected[0] = target.id;
-    this.answerselected[1] = target.innerHTML;
+    this.answerselected.id = target.id;
+    this.answerselected.answer_Text = target.innerHTML;
+
 
     //Trigger the Creation of the Next element
     this.mainPage_object.make_guide_ele(target.getAttribute('data-atarget'));

@@ -86,3 +86,6 @@
 1. Made new Road Map with Template.
 2. Variable to hold Usermessages: Guide version (Both can't go on an warning).
 3. Variable to hold Usermessage: Guide Path Not valid.
+4. updated the clicked function to account for changes in current element context
+5. added Function to Replay the Guide
+6. Begain Testing on Guide Replay system (Current known Bugs. No error is displayed when a guide is entered with an invaled Guid ID)

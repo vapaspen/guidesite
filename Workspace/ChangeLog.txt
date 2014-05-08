@@ -93,3 +93,6 @@
 2014-05-07:
 1. Updated ByID to accept HTML Obj and throw corrected errors
 2. Added ByID loading to most innerHTML functions. (byid needs to be added to any case that Make div was not called in the same function.) 
+3. Updated Replay Loader to provide an Provide a user message when the guide ID is invalided
+4. Made the Guide ID not case sensitive. 
+5. Updated Replay function to be a control function with 3 sub functions

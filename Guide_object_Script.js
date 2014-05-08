@@ -632,17 +632,18 @@ GuideObj.prototype.start_guide = function () {
 
         //loop though guide names elements to find the matching Attibute. 
         for (var i = 0; i < guidenames.length; i++) {
-            if (guidenames[i].getAttribute("guideid") == this.usableinput.guidename) {
+            if (guidenames[i].getAttribute("guideid").toLowerCase() == this.usableinput.guidename) {
                 //request the load of the current XML
                 loadFile(guidenames[i].getAttribute("guideloc"), this.timout, this.xmlLoadHandler, 4, this)
                 return true;
             }
         }
 
+        //report a message that the Guide ID was not correct
+        alert(this.replay_code_name_missing);
         return false;
 
     };
-
 
     
     //Once the XML is Loaded start the Replay
@@ -652,25 +653,32 @@ GuideObj.prototype.start_guide = function () {
         //Flage we are doing a Replay
         this.isReplay = true;
 
-        //Local variable to hold the Parsed XML.
-        var parsedXML = undefined;
+        //Check the Version
+        if(this.check_replay_ver() == false){return false}
+
+        //start the guide
+        if(this.start_replay() == false){return false}
+
+        //make guide by path
+        if(this.replay_path() == false){return false}
+    };
+
+
+
+    //Function to confirm all parces guide code is has a usable verion.
+    //Requires current guide be loaded.
+    //Confrims replay code can be used. 
+    GuideObj.prototype.check_replay_ver = function () {
 
         //local to hold parsed Guidename
         var parsed_guidename = undefined;
 
+
         //Local var for parces guide Version
         var parsed_gude_ver = undefined;
 
-        //local for holding the first element 
-        var firstelement = undefined;
-
-        //local variable to hold the working element.
-        var working_ele = undefined;
-
         //Local Var for confriming decmal is found
         var dec_found = false;
-
-
 
         //Check if Current Guide XML is empty (if it is Thow an error)
         if (this.currentGuideXML == null || this.currentGuideXML == undefined) { throw "currentGuideXML Empty" }
@@ -699,8 +707,22 @@ GuideObj.prototype.start_guide = function () {
 
         }
 
-        //Parse the Current Guide XML for the elements and Load the Local
+        return true;
+    };
 
+
+    //make the first element and adujust the display to account for the guide starting
+    //requires the Replay code version and ID be valid
+    //Returns True once the Guide has started
+    GuideObj.prototype.start_replay = function () {
+
+        //Local variable to hold the Parsed XML.
+        var parsedXML = undefined;
+
+        //local for holding the first element 
+        var firstelement = undefined;
+
+        //Parse the Current Guide XML for the elements and Load the Local
         parsedXML = this.currentGuideXML.getElementsByTagName('element');
 
         //Load the firstelement with the first Node in the list. 
@@ -714,6 +736,19 @@ GuideObj.prototype.start_guide = function () {
 
         //Hide the Launch button for the Guide Repete function. 
         byid("ReplayCode_submit").setAttribute("style", "display: none");
+
+
+        return true;
+    };
+
+
+    //make all remaining elements
+    //requires the first element to be made
+    // workes by calling the Clicked function from the work element
+    GuideObj.prototype.replay_path = function () {
+        //local variable to hold the working element.
+        var working_ele = undefined;
+
 
         //for each element of the guide code string do the following:
         //get and store the HTML object that matches the index of the current string index to number.
@@ -737,7 +772,11 @@ GuideObj.prototype.start_guide = function () {
             this.pageobjects[t].answerClicked(working_ele);
         }
 
+        return true;
     };
+
+    
+
 
 
     //Remove the box
@@ -1051,22 +1090,25 @@ Parseinput.prototype.parse = function () {
     //local var to hold position of the . in the str
     var decpos = -1;
 
-	//Check if input box has provided any content
-	if (this.string_to_parse == undefined || this.string_to_parse == "") { return "empty"; }
-	
-	
+    //Check if input box has provided any content
+    if (this.string_to_parse == undefined || this.string_to_parse == "") { return "empty"; }
+
+
     //Load the Guide name
     this.guidename = this.string_to_parse.slice(0, 2);
 
+    //make guide name nto case sensitive 
+    this.guidename = this.guidename.toLowerCase();
+
     //if Check if the guide name parse failed, return with just the name of the parse that failed. 
-    if (this.guidename == undefined || this.guidename == ""|| this.guidename.length  != 2) { return "guidename"; }
+    if (this.guidename == undefined || this.guidename == "" || this.guidename.length != 2) { return "guidename"; }
 
     //update the string to remove the Guide name
     this.string_to_parse = this.string_to_parse.slice(2);
 
     //get the position of the . in the str
     decpos = this.string_to_parse.indexOf('.');
-	
+
     //Load the guide version
     this.guideVer = this.string_to_parse.slice(0, decpos + 2);
 
@@ -1076,8 +1118,10 @@ Parseinput.prototype.parse = function () {
     //update the string to remove the Guide Version.
     this.guidecode = this.string_to_parse.slice(decpos + 2);
 
+    
+
     //Check that the remaining string is a number. If it is not, return with just the name of the parse that failed.
-    if (this.guidecode == undefined || Number(this.guidecode) == "NaN") { return "guidecode"; }
+    if (this.guidecode == undefined || isNaN(this.guidecode) == true) { return "guidecode";}
 
     //at the end return True for success. 
     return true;

@@ -6,6 +6,8 @@ STATUS:
 
 Proity: 
 
+Reason:
+
 PREREQUISITES: 
     STATUS:  
 
@@ -37,9 +39,11 @@ Status:
 --------------------------------------------------------------------------------
 NAME: Replay guide function 
 
-STATUS: testing
+STATUS: deployed
 
 Proity: High
+
+Reason: To help user and helpdesk Review viewed Work
 
 PREREQUISITES: Replay Guide XML Load and Replay guide code creation
     STATUS: Deployed 
@@ -52,9 +56,40 @@ DISCRIPTION: Function to Make the Guide elements based on Guide code path
 
 NEEDED BY: Presentation with Helpdesk Management 
 
-NOTES: Checks user input and will reload page if an error is found. Will also Present an error to the User. 
+NOTES: Checks user input and will reload page if an error is found. Will also Present an error to the User.
+
+Bugs: Will not throw an error if the guide Name is entered in correctly  
 
 --------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+NAME: Break the reply guide function into 4 small functions.  
+
+STATUS: deployed
+
+Proity: medium
+
+Reason: To make replay system more manageable 
+
+PREREQUISITES: Replay guide code functionable 
+    STATUS:  deployed 
+
+DISCRIPTION: Same as the reply guide functions broken in the following way:
+    1. Main function to control the flow.
+    2. Function to Check Verion and Guide name
+    3. Find and make the first element 
+    4. Find and Make the the remaining elements 
+
+    PRECONDITION: Guide code has already been parsed into object and current Guide is Loaded. 
+
+    POSTCONDITION: Guide is fulled displaied based on Guide Path
+
+NEEDED BY: Presitation with Development 
+
+NOTES:
+
+--------------------------------------------------------------------------------
+
 
 --------------------------------------------------------------------------------
 NAME: Update Documentdtation and add By ID 
@@ -63,16 +98,18 @@ STATUS: Road Map
 
 Proity: High
 
+Reason: to increase the consistance of the code. 
+
 PREREQUISITES: By ID updated to alow for HTML objects as Args
     STATUS:  deployed
 
 DISCRIPTION: Update all functions with a list of all Divs made in that function. Then update all functions to use byid on any HTML referance no created in that object. 
 
-    PRECONDITION: all functinos as they currently are
+    PRECONDITION: all functinos working 
 
-    POSTCONDITION:
+    POSTCONDITION: All functions wil work more consistantly 
 
-NEEDED BY:
+NEEDED BY: Presitation with Development 
 
 NOTES:
 

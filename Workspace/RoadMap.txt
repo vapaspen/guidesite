@@ -1,5 +1,5 @@
-------------------------------------Template------------------------------------
---------------------------------------------------------------------------------
+------------------------------------Templates-----------------------------------
+------------------------------------New Function--------------------------------
 NAME:  
 
 STATUS: 
@@ -23,6 +23,26 @@ NOTES:
 
 --------------------------------------------------------------------------------
 
+------------------------------------Code Update---------------------------------
+DISCRIPTION: 
+
+STATUS: 
+
+Proity: 
+
+Reason:
+
+PREREQUISITES: 
+    STATUS:  
+
+STEPS:
+
+NEEDED BY:
+
+NOTES:
+
+--------------------------------------------------------------------------------
+
 -------------------------------------legend-------------------------------------
 
 Status:
@@ -36,7 +56,8 @@ Status:
 
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
+
+------------------------------------New Function--------------------------------
 NAME: Replay guide function 
 
 STATUS: deployed
@@ -62,8 +83,9 @@ Bugs: Will not throw an error if the guide Name is entered in correctly
 
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
-NAME: Break the reply guide function into 4 small functions.  
+
+------------------------------------Code Update---------------------------------
+DISCRIPTION: Break the reply guide function into 4 small functions.  
 
 STATUS: deployed
 
@@ -74,17 +96,37 @@ Reason: To make replay system more manageable
 PREREQUISITES: Replay guide code functionable 
     STATUS:  deployed 
 
-DISCRIPTION: Same as the reply guide functions broken in the following way:
+STEPS:
     1. Main function to control the flow.
     2. Function to Check Verion and Guide name
     3. Find and make the first element 
     4. Find and Make the the remaining elements 
 
-    PRECONDITION: Guide code has already been parsed into object and current Guide is Loaded. 
-
-    POSTCONDITION: Guide is fulled displaied based on Guide Path
-
 NEEDED BY: Presitation with Development 
+
+NOTES:
+
+--------------------------------------------------------------------------------
+
+
+------------------------------------Code Update---------------------------------
+DISCRIPTION: Update all buttons to be Divs with the Make Div function. Store the div as a variable, and update the CSS file with an eantry for each button.
+
+STATUS: Road Map
+
+Proity: High
+
+Reason: Allow for more customizablity for each button in the system
+
+PREREQUISITES: Format CSS page to have a place for Buttons
+    STATUS:  Deployed 
+
+STEPS:
+    1. Define CSS for buttions
+    2. Add the Varables 
+    3. Add the Make Div items
+
+NEEDED BY: Presentation With Helpdesk 
 
 NOTES:
 
@@ -94,7 +136,7 @@ NOTES:
 --------------------------------------------------------------------------------
 NAME: Update Documentdtation and add By ID 
 
-STATUS: Road Map
+STATUS: working
 
 Proity: High
 
@@ -104,10 +146,6 @@ PREREQUISITES: By ID updated to alow for HTML objects as Args
     STATUS:  deployed
 
 DISCRIPTION: Update all functions with a list of all Divs made in that function. Then update all functions to use byid on any HTML referance no created in that object. 
-
-    PRECONDITION: all functinos working 
-
-    POSTCONDITION: All functions wil work more consistantly 
 
 NEEDED BY: Presitation with Development 
 

@@ -125,7 +125,7 @@ box-shadow: 0 10px 6px -6px #777;
 
 /*--remove button--*/
 /*has a active mode*/
-.removecss
+.remove_button
 {
 float:right;
 }
@@ -135,7 +135,7 @@ float:right;
 
 /*--copy button--*/
 /*has a active mode*/
-.copybutton
+.copy_button
 {
 
 }
@@ -143,24 +143,41 @@ float:right;
 /*---------------*/
 
 
-/*--Reload button--*/
+/*--Reset button--*/
 /*has a active mode*/
+.reset_button
+{
 
-/*--Reload button--*/
+}
+/*--Reset button--*/
 /*-----------------*/
 
 
+/*--Replay Input--*/
+/*has a active mode*/
+.replay_input
+{
+
+}
+/*--Replay Input--*/
+/*-----------------*/
+
 /*--Launch button--*/
 /*has a active mode*/
+.replay_Code_submit
+{
 
+}
 /*--Launch button--*/
 /*-----------------*/
 
 
 /*--start button--*/
 /*has a active mode*/
+.start_button
+{
 
-
+}
 /*--start button--*/
 /*-----------------*/
 

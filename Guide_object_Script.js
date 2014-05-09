@@ -162,6 +162,23 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
 
     //-------------------//
 
+
+    //---Button Variables---//
+    /*--start button--*/
+    //(ID:"" Class: "" ) 
+
+
+    /*--Launch button--*/
+    //(ID:"" Class: "" ) 
+
+
+    /*--copy button--*/
+    //(ID:"" Class: "" ) 
+
+
+    //----------------------//
+
+
     //---General Text Variables---//
     //---------------------------//
 
@@ -240,9 +257,9 @@ GuideObj.prototype.handleEvent = function (event) {
 
         try{// if the event is for one of our buttons catch aney errors those buttons functions throw. 
 
-            if (event.target.id == "copybutton") { this.copyToClip(); }
+            if (event.target.id == "copy_button") { this.copyToClip(); }
             if (event.target.id == "start_button") { this.findSelGuid(); }
-            if (event.target.id == "ReplayCode_submit") { this.loadreplay(); }
+            if (event.target.id == "replay_code_submit") { this.loadreplay(); }
 
         }//end of try. Catch the errors and Run the error handler. 
         catch (err) {errhandler(err, this.is_debugmode);}
@@ -254,6 +271,7 @@ GuideObj.prototype.handleEvent = function (event) {
     ///////////////////////
 
     //find objects by index
+    //needs the index of the page object
     GuideObj.prototype.PObj = function (indexin) {
 
         //check input 
@@ -365,7 +383,7 @@ GuideObj.prototype.handleEvent = function (event) {
         this.ReplayCodeBoxDiv.innerHTML += '<lable> ' + this.replayBox_lable + '<input type = "text" class="ReplayCodeBox" id="ReplayCodeBox"></lable>';
 
         //add a submitt butt for the Guide Code
-        this.ReplayCodeBoxDiv.innerHTML += '<input type="button" id="ReplayCode_submit" value=' + this.ReplayCode_submit_value + '>';
+        this.ReplayCodeBoxDiv.innerHTML += '<input type="button" id="replay_code_submit" value=' + this.ReplayCode_submit_value + '>';
 
         //add the replay Code box as a object var for later referance. 
         this.replayinput = byid("ReplayCodeBox");
@@ -384,7 +402,7 @@ GuideObj.prototype.handleEvent = function (event) {
 
         this.add_start_button();
         this.makeform("guide_selection_forum");
-        this.myheading.innerHTML += '<input type="button" class="copybutton" id="copybutton" value="copy guide"></input>';
+        this.myheading.innerHTML += '<input type="button" class="copy_button" id="copy_button" value="copy guide"></input>';
     }
 
 
@@ -503,7 +521,7 @@ GuideObj.prototype.start_guide = function () {
     byid("start_button").setAttribute("style", "display: none");
 
     //Hide the Launch button for the Guide Repete function. 
-    byid("ReplayCode_submit").setAttribute("style", "display: none");
+    byid("replay_code_submit").setAttribute("style", "display: none");
 
 };
 
@@ -735,7 +753,7 @@ GuideObj.prototype.start_guide = function () {
         byid("start_button").setAttribute("style", "display: none");
 
         //Hide the Launch button for the Guide Repete function. 
-        byid("ReplayCode_submit").setAttribute("style", "display: none");
+        byid("replay_code_submit").setAttribute("style", "display: none");
 
 
         return true;
@@ -811,7 +829,7 @@ GuideObj.prototype.start_guide = function () {
             byid("start_button").setAttribute("style", "display: initial");
 
             //Show the Guide Repete Button
-            byid("ReplayCode_submit").setAttribute("style", "display: initial");
+            byid("replay_code_submit").setAttribute("style", "display: initial");
 
             //Empty the Reply box when we Delet the Last Box
             byid("ReplayCodeBox").value = "";
@@ -880,17 +898,27 @@ GuideObj.prototype.start_guide = function () {
         //(ID:this.name + '_aswer_space' Class: this.classname + '_aswer_space') 
         this.aswerSpace = undefined;
 
-        //Array of Divs describs the buttons.
-        //(ID:this.name + '_abutton' + i Class: this.classname + '_answerbutton") 
-        this.answerbuttons = new Array();
-
         //-------------------------//
 
 
+        //---Button Variables---//
+        /*--remove button--*/
+        //(ID:"" Class: "" ) 
 
-        //this.answerselected = new Array(); //[0] is ID [1] is answer Text [2] Index is the of the answer
+
+        /*--remove button--*/
+        //(ID:"" Class: "" )
+        
+
+        /*--Answer buttons--*/
+        //(ID:this.name + '_abutton' + i Class: this.classname + '_answerbutton" [And] this.classname + '_answerbutton_selected')
+        this.answerbuttons = new Array(); 
 
 
+    //----------------------//
+
+
+        //object to hold the results of a selected anwser 
         this.answerselected = {
             id: undefined,
             answer_Text: undefined,
@@ -934,10 +962,10 @@ GuideObj.prototype.start_guide = function () {
             if (event.target.className == this.classname + '_answerbutton') { this.answerClicked(event.target); }
 
             //check if what was clicked is a remove button - if it was, call the remove function of the main page object this  object
-            if (event.target.className == "removecss") { this.mainPage_object.remove_box(this); }
+            if (event.target.className == "remove_button") { this.mainPage_object.remove_box(this); }
 
             //check if what was clicked is a reset button - if it was, reload the Page
-            if (event.target.className == "resetbutton") { location.reload(); }
+            if (event.target.className == "reset_button") { location.reload(); }
     }
     catch (err) {errhandler(err, this.is_debugmode);}
 }
@@ -949,10 +977,10 @@ Guide_ele.prototype.make_guide_ele_disp = function () {
     this.guide_element = makeDiv(this.mainPage_object.pagespace, this.name, this.classname);
 
     //make and draw the remove button
-    this.guide_element.innerHTML += '<input type="button"; value="X"; class="removecss" id="' + this.name + '_remove"></input>';
+    this.guide_element.innerHTML += '<input type="button"; value="X"; class="remove_button" id="' + this.name + '_remove"></input>';
 
     //make and draw the Reset button
-    this.guide_element.innerHTML += '<input type="button"; value="Reset"; class="resetbutton" id="' + this.name + '_resetbutton"></input>';
+    this.guide_element.innerHTML += '<input type="button"; value="Reset"; class="reset_button" id="' + this.name + '_reset_button"></input>';
 
     //make Question Space of the Box
     this.questionSpace = makeDiv(this.guide_element, this.name + '_question_space', this.classname + '_qspace',this.question);
@@ -1027,7 +1055,7 @@ Guide_ele.prototype.answerClicked = function (target) {
     //make close Box disappear
     byid(this.name + '_remove').setAttribute("style", "display: none");
 
-    byid(this.name + '_resetbutton').setAttribute("style", "display: none");
+    byid(this.name + '_reset_button').setAttribute("style", "display: none");
 
     //change the class for the clicked button so we can make it look different
     byid(target).className = this.classname + "_answerbutton_selected";

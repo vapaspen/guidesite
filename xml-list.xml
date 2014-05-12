@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <guide_list>
-    <guidename guideloc = "/guides/Technical_Troubleshooting.xml" guideid="LG" is_selectable="False">
+    <guidename guideloc = "/guides/Technical_Troubleshooting.xml" guideid="LG" is_selectable="false">
         Technical_Troubleshooting
     </guidename>
     <guidename guideloc = "/guides/log_in_error.xml" guideid="AA" is_selectable="true">

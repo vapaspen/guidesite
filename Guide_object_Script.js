@@ -165,16 +165,39 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
 
     //---Button Variables---//
     /*--start button--*/
-    //(ID:"" Class: "" ) 
-
+    //(ID:"start_button" Class: "start_button" ) 
+    this.start_button = undefined;
+    //Value:
+    this.start_button_value = "Start this Guide";
 
     /*--Launch button--*/
-    //(ID:"" Class: "" ) 
-
+    //(ID:"replay_code_submit" Class: "replay_code_submit" ) 
+    this.replay_code_submit = undefined;
+    //Value:
+    this.replay_code_submit_value = "Launch Guide";
 
     /*--copy button--*/
-    //(ID:"" Class: "" ) 
+    //(ID:"copy_button" Class: "copy_button" ) 
+    this.copy_button = undefined;
+    //Value:
+    this.copy_button_value = "Copy Guide";
 
+    /*--Remove button--*/
+    //(ID:"" Class: "" )
+    //Defined in Element OBj
+    //Value:
+    this.remove_button_value = "X";
+
+
+    /*--Reset button--*/
+    //Defined in Element OBj
+    //Value:
+    this.reset_button_value = "Reset";
+
+    /*--Answer buttons--*/
+    //Defined in Element OBj
+    //Delimiter:
+    this.answer_buttons_delimiter = "";
 
     //----------------------//
 
@@ -184,9 +207,6 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
 
     //Text displayed for the lable
     this.replayBox_lable = "Guide Code:";
-
-    //Text displayed on Submit button for ReplayCode_submit
-    this.ReplayCode_submit_value = "Launch Guide";
 
     //heading Text 
     this.heading_Text = "Welcome to the 24/7 Support agent Guided assistance Page!";
@@ -257,9 +277,9 @@ GuideObj.prototype.handleEvent = function (event) {
 
         try{// if the event is for one of our buttons catch aney errors those buttons functions throw. 
 
-            if (event.target.id == "copy_button") { this.copyToClip(); }
-            if (event.target.id == "start_button") { this.findSelGuid(); }
-            if (event.target.id == "replay_code_submit") { this.loadreplay(); }
+            if (event.target.id == this.copy_button.id) { this.copyToClip(); }
+            if (event.target.id == this.start_button.id) { this.findSelGuid(); }
+            if (event.target.id == this.replay_code_submit.id) { this.loadreplay(); }
 
         }//end of try. Catch the errors and Run the error handler. 
         catch (err) {errhandler(err, this.is_debugmode);}
@@ -382,8 +402,8 @@ GuideObj.prototype.handleEvent = function (event) {
         //add the input Box to the Div
         this.ReplayCodeBoxDiv.innerHTML += '<lable> ' + this.replayBox_lable + '<input type = "text" class="ReplayCodeBox" id="ReplayCodeBox"></lable>';
 
-        //add a submitt butt for the Guide Code
-        this.ReplayCodeBoxDiv.innerHTML += '<input type="button" id="replay_code_submit" value=' + this.ReplayCode_submit_value + '>';
+        //add a submitt butt for the Guide Code 
+        this.replay_code_submit = makeDiv(this.ReplayCodeBoxDiv,"replay_code_submit","replay_code_submit", this.replay_code_submit_value);
 
         //add the replay Code box as a object var for later referance. 
         this.replayinput = byid("ReplayCodeBox");
@@ -402,7 +422,13 @@ GuideObj.prototype.handleEvent = function (event) {
 
         this.add_start_button();
         this.makeform("guide_selection_forum");
-        this.myheading.innerHTML += '<input type="button" class="copy_button" id="copy_button" value="copy guide"></input>';
+        this.myheading.innerHTML += '<br>';
+
+        //make the copy button.
+        this.copy_button = makeDiv(this.myheading,"copy_button","copy_button",this.copy_button_value);
+
+        //hide the copy button.
+        byid(this.copy_button.id).setAttribute("style", "display: none");
     }
 
 
@@ -455,8 +481,8 @@ GuideObj.prototype.handleEvent = function (event) {
     //add the start button
     GuideObj.prototype.add_start_button = function () {
 
-        // add button to start guide
-        this.myheading.innerHTML += '<input id="start_button" type="button" value= "Start this Guide"></input>';
+        // add button to start guide 
+        this.start_button = makeDiv(this.myheading,"start_button","start_button",this.start_button_value)
         
     };
 
@@ -522,6 +548,9 @@ GuideObj.prototype.start_guide = function () {
 
     //Hide the Launch button for the Guide Repete function. 
     byid("replay_code_submit").setAttribute("style", "display: none");
+
+    //Display the Copy Button
+    byid(this.copy_button.id).setAttribute("style", "display: initial");
 
 };
 
@@ -755,6 +784,9 @@ GuideObj.prototype.start_guide = function () {
         //Hide the Launch button for the Guide Repete function. 
         byid("replay_code_submit").setAttribute("style", "display: none");
 
+        //Display the Copy button
+        byid(this.copy_button.id).setAttribute("style", "display: initial");
+
 
         return true;
     };
@@ -831,6 +863,9 @@ GuideObj.prototype.start_guide = function () {
             //Show the Guide Repete Button
             byid("replay_code_submit").setAttribute("style", "display: initial");
 
+            //Hide the copy button:
+            byid(this.copy_button.id).setAttribute("style", "display: none");
+
             //Empty the Reply box when we Delet the Last Box
             byid("ReplayCodeBox").value = "";
         }
@@ -849,7 +884,7 @@ GuideObj.prototype.start_guide = function () {
 
                     //get the Answer element and add it to the copy
                     if (this.pageobjects[i].answerselected.id != undefined) {
-                        out_put_text += "Answer:  " + this.pageobjects[i].answerselected.id.trim() + "  ";
+                        out_put_text += "Answer:  " + byid(this.pageobjects[i].answerselected.id).innerHTML + "  ";
                     }
                     out_put_text += "<br><br>";
                 }
@@ -902,13 +937,14 @@ GuideObj.prototype.start_guide = function () {
 
 
         //---Button Variables---//
-        /*--remove button--*/
-        //(ID:"" Class: "" ) 
+        /*--Remove button--*/
+        //(ID:"" Class: "remove_button" )
+        this.remove_button = undefined;
 
 
-        /*--remove button--*/
-        //(ID:"" Class: "" )
-        
+        /*--Reset button--*/
+        //(ID:"this.name + '_reset_button" Class: "reset_button" )
+        this.reset_button = undefined;
 
         /*--Answer buttons--*/
         //(ID:this.name + '_abutton' + i Class: this.classname + '_answerbutton" [And] this.classname + '_answerbutton_selected')
@@ -962,10 +998,10 @@ GuideObj.prototype.start_guide = function () {
             if (event.target.className == this.classname + '_answerbutton') { this.answerClicked(event.target); }
 
             //check if what was clicked is a remove button - if it was, call the remove function of the main page object this  object
-            if (event.target.className == "remove_button") { this.mainPage_object.remove_box(this); }
+            if (event.target.className == this.remove_button.className) { this.mainPage_object.remove_box(this); }
 
             //check if what was clicked is a reset button - if it was, reload the Page
-            if (event.target.className == "reset_button") { location.reload(); }
+            if (event.target.className == this.reset_button.className) { location.reload(); }
     }
     catch (err) {errhandler(err, this.is_debugmode);}
 }
@@ -977,10 +1013,11 @@ Guide_ele.prototype.make_guide_ele_disp = function () {
     this.guide_element = makeDiv(this.mainPage_object.pagespace, this.name, this.classname);
 
     //make and draw the remove button
-    this.guide_element.innerHTML += '<input type="button"; value="X"; class="remove_button" id="' + this.name + '_remove"></input>';
+    this.remove_button = makeDiv(this.guide_element,this.name + '_remove_button',"remove_button",this.mainPage_object.remove_button_value)
 
-    //make and draw the Reset button
-    this.guide_element.innerHTML += '<input type="button"; value="Reset"; class="reset_button" id="' + this.name + '_reset_button"></input>';
+    //make and draw the Reset button 
+    this.reset_button = makeDiv(this.guide_element,this.name + '_reset_button',"reset_button",this.mainPage_object.reset_button_value)
+    
 
     //make Question Space of the Box
     this.questionSpace = makeDiv(this.guide_element, this.name + '_question_space', this.classname + '_qspace',this.question);
@@ -998,20 +1035,18 @@ Guide_ele.prototype.make_guide_ele_disp = function () {
 //get Question text from XML
 Guide_ele.prototype.getquestion = function (ele_to_find) {
 
-            //Load a Temp Var with the Parsed Result of looking through the current XML for element to Search for. 
-            var x = this.mainPage_object.currentGuideXML.getElementsByTagName(ele_to_find);
+    //Load a Temp Var with the Parsed Result of looking through the current XML for element to Search for. 
+    var x = this.mainPage_object.currentGuideXML.getElementsByTagName(ele_to_find);
 
-            //look through result XML for this element
-            for (var i = 0; i < x.length; i++) {
+    //look through result XML for this element
+    for (var i = 0; i < x.length; i++) {
+        //Check if the current element has teh same name as this.name
+        if (x[i].parentNode.getAttribute('elname') == this.name) {
+            //if the current node is apart of the this.name
+            return x[i].childNodes[1].nodeValue;
+        }
+    }
 
-                //Check if the current element has teh same name as this.name
-                if (x[i].parentNode.getAttribute('elname') == this.name) {
-
-                    //if the current node is apart of the this.name
-                    return x[i].childNodes[0].nodeValue;
-                }
-            }
-          
 }
 
 
@@ -1028,7 +1063,7 @@ Guide_ele.prototype.makeAnswerbuttons = function () {
         if (x[i].parentNode.getAttribute('elname') == this.name) {
 
             //Load the answer Text into a temp var
-            var answertext = x[i].childNodes[0].nodeValue;
+            var answertext = x[i].childNodes[1].nodeValue;
 
             //Load the target for the next element from into a temp Var
             var answertarget = x[i].getAttribute('atarget')
@@ -1037,10 +1072,13 @@ Guide_ele.prototype.makeAnswerbuttons = function () {
             var mydivid = this.name + '_abutton' + i;
 
             //make the button with the loaded temp vars
-            this.answerbuttons.push(makeDiv(this.aswerSpace, mydivid, this.classname + '_answerbutton', answertext))
+            this.answerbuttons.push(makeDiv(this.aswerSpace, mydivid, this.classname + '_answerbutton', answertext));
 
             //add the atarget to the button for use when seleted. 
-            this.answerbuttons[this.answerbuttons.length -1].setAttribute("data-atarget", answertarget);
+            this.answerbuttons[this.answerbuttons.length - 1].setAttribute("data-atarget", answertarget);
+
+            //make the questions aline verticely 
+            byid(this.aswerSpace).innerHTML += this.mainPage_object.answer_buttons_delimiter;
         }
     }
     //if the element has no Answers then display the end info in the Answer section 
@@ -1053,9 +1091,10 @@ Guide_ele.prototype.makeAnswerbuttons = function () {
 
 Guide_ele.prototype.answerClicked = function (target) {
     //make close Box disappear
-    byid(this.name + '_remove').setAttribute("style", "display: none");
+    byid(this.remove_button.id).setAttribute("style", "display: none");
 
-    byid(this.name + '_reset_button').setAttribute("style", "display: none");
+    //Make the Reset button disappear
+    byid(this.reset_button.id).setAttribute("style", "display: none");
 
     //change the class for the clicked button so we can make it look different
     byid(target).className = this.classname + "_answerbutton_selected";

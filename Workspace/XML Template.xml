@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Guide>
+    <guidename guideid="" version="1.0">
+        Name Of Guide
+    </guidename>
+
+    <!-- First element -->
+			<element elname="First Element">
+				<question>
+                    ![CDATA[]]
+                </question>
+				<answer atarget = "" >
+				    ![CDATA[]]
+				</answer>
+			</element>
+			
+    <!-- -->
+			<element elname="">
+				<question>
+                    ![CDATA[]]
+                </question>
+				<answer atarget ="">
+                    ![CDATA[]]
+				</answer>
+			</element>
+</Guide>

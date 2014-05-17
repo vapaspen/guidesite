@@ -85,9 +85,6 @@ function loadFile(sURL, timeout, fCallback /*, argumentToPass1, argumentToPass2,
     //open the HTTP Request into a new Object
     var ReqObj = new XMLHttpRequest();
 
-    //set the Timeout setting in the request 
-    ReqObj.timeout = timeout;
-
     //set the object to store its callback 
     ReqObj.callback = fCallback;
     //Slice the first 3 args off and store the rest of the areguments of this function for later use
@@ -95,6 +92,9 @@ function loadFile(sURL, timeout, fCallback /*, argumentToPass1, argumentToPass2,
 
     //Open the get request with the Load values
     ReqObj.open("get", sURL, true);
+
+    //set the Timeout setting in the request 
+    ReqObj.timeout = timeout;
 
     //Send the Request
     ReqObj.send(null);

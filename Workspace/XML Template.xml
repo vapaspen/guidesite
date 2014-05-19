@@ -6,21 +6,13 @@
 
     <!-- First element -->
 			<element elname="First Element">
-				<question>
-                    ![CDATA[]]
-                </question>
-				<answer atarget = "" >
-				    ![CDATA[]]
-				</answer>
+				<question>![CDATA[]]</question>
+				<answer atarget = "" >![CDATA[]]</answer>
 			</element>
 			
     <!-- -->
 			<element elname="">
-				<question>
-                    ![CDATA[]]
-                </question>
-				<answer atarget ="">
-                    ![CDATA[]]
-				</answer>
+				<question>![CDATA[]]</question>
+				<answer atarget = "" >![CDATA[]]</answer>
 			</element>
 </Guide>

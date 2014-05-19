@@ -1043,7 +1043,7 @@ Guide_ele.prototype.getquestion = function (ele_to_find) {
         //Check if the current element has teh same name as this.name
         if (x[i].parentNode.getAttribute('elname') == this.name) {
             //if the current node is apart of the this.name
-            return x[i].childNodes[1].nodeValue;
+            return x[i].childNodes[0].nodeValue;
         }
     }
 
@@ -1063,7 +1063,7 @@ Guide_ele.prototype.makeAnswerbuttons = function () {
         if (x[i].parentNode.getAttribute('elname') == this.name) {
 
             //Load the answer Text into a temp var
-            var answertext = x[i].childNodes[1].nodeValue;
+            var answertext = x[i].childNodes[0].nodeValue;
 
             //Load the target for the next element from into a temp Var
             var answertarget = x[i].getAttribute('atarget')

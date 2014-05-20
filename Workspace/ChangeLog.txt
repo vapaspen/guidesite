@@ -106,3 +106,6 @@
 2. Added makediv functionality for making buttons and added variables to hold div referance.
 3. Created a Template for XML files
 4. Created a Demo Guide with images 
+
+2014-05-19:
+1. Added all variables to handle current planned additions.

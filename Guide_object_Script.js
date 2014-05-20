@@ -240,10 +240,35 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
 
     //---------------------------------//
 
+
+
+    //-----XML Storage variables-----//
+
+    //XML for Configuration file
+    this.guide_config_XML = null;
+
+
+    //XML that has a list of all Thrown error Messages. 
+    this.guide_errors_XML = null;
+
+
+    //XML that lists all Messages to the User that are not apart of the page set or thrown errors.
+    this.guide_messages_XML = null;
+
+
+    //XML for list of Guides and their Locations. 
+    //This file is searched against by the context engine to find active guides.
+    this.guide_List_XML = null;
+
+
+    //XML for the Current working Guide
+    this.current_Guide_XML = null;
+
+
+    //-------------------------------//
+
     //Object to hold the parsed Input 
     this.usableinput = new Parseinput();
-
-    this.buttonclass = "guide_element";
 
     this.timout = 2000;
 
@@ -257,14 +282,9 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
 
     this.replaycode = undefined;
 
-    this.guideheading = "guide_heading";
-    this.currentGuideXML = null;
-    this.guideListXML = null;
-    this.guideConfig = null;
-
     this.is_debugmode = is_debugmode_flage;
 
-    this.guidelistXMLLoc = xml_stub;
+    this.guide_List_XMLLoc = xml_stub;
 
     //add event handler to copy button
     this.pagespace.addEventListener("click", this, true);
@@ -334,11 +354,10 @@ GuideObj.prototype.handleEvent = function (event) {
         try {//try for Loading the Guide. Will catch errors and pass them to the error system.
 
             //Load guide for XML list with a timeout loaded from the config file.
-            loadFile(this.guidelistXMLLoc, this.timout, this.xmlLoadHandler, 2, this)
+            loadFile(this.guide_List_XMLLoc, this.timout, this.xmlLoadHandler, 2, this)
             
         }
         catch (err) { errhandler(err, this.is_debugmode); }
-    }
 
 
 
@@ -352,25 +371,25 @@ GuideObj.prototype.handleEvent = function (event) {
 
             //If Load ID is 1 Load Configuration Variable   
             case 1:
-                objref.guideConfig = XML_in;
+                objref.guide_config_XML = XML_in;
                 //ToDo: - Parse and Load Config XML
                 break;
 
-            //If Load ID is 2 Set the guideListXML Var then Run the Make Guide Display  
+            //If Load ID is 2 Set the guide_List_XML Var then Run the Make Guide Display  
             case 2:
-                objref.guideListXML = XML_in;
+                objref.guide_List_XML = XML_in;
                 objref.make_guide_display();
                 break;
 
             //If Load ID is 3 Set the Current XML and Run the Function to statrt the guide   
             case 3:
-                objref.currentGuideXML = XML_in;
+                objref.current_Guide_XML = XML_in;
                 objref.start_guide();
                 break;
 
             //If Load ID is 4 Sent the Current XML and Run the Replay.!!!! Currently a stub  
             case 4:
-                objref.currentGuideXML = XML_in;
+                objref.current_Guide_XML = XML_in;
                 objref.replayGuide();
                 break;
 
@@ -440,13 +459,13 @@ GuideObj.prototype.handleEvent = function (event) {
         this.guide_selection_forum = byid(location);
 
         //validate input
-        if (typeof this.guideListXML === null || typeof this.guideListXML === undefined) { throw "Cant make Guide select buttons, guideListXML empty" }
+        if (typeof this.guide_List_XML === null || typeof this.guide_List_XML === undefined) { throw "Cant make Guide select buttons, guide_List_XML empty" }
 
         //initalize a var thats used to check if buttons are made. starts false and is set to ture when a button is made. checked at the end
         var made_buttons = false;
 
         //Get Guide Names
-        guidenames = this.guideListXML.getElementsByTagName("guidename");
+        guidenames = this.guide_List_XML.getElementsByTagName("guidename");
 
         //check to make sure that Guide names are found
         if (guidenames === null || guidenames === undefined) { throw "Cant make Guide select buttons, guidenames empty" }
@@ -535,7 +554,7 @@ GuideObj.prototype.start_guide = function () {
     this.getGuideInfo();
 
     //Parses the Guide XML for all Elements and loads them. 
-    list_of_ele = this.currentGuideXML.getElementsByTagName('element');
+    list_of_ele = this.current_Guide_XML.getElementsByTagName('element');
 
     //Load the firstelement with the first Node in the list. 
     firstelement = list_of_ele[0].getAttribute('elname');
@@ -559,7 +578,7 @@ GuideObj.prototype.start_guide = function () {
     GuideObj.prototype.make_guide_ele = function (next_element) {
 
         // makes a new box object and adds it to the Page array
-        this.pageobjects.push(new Guide_ele(this, this.pageobjects.length, this.buttonclass, next_element));
+        this.pageobjects.push(new Guide_ele(this, this.pageobjects.length, next_element));
 
         //update the replay codewhen we make a new box
         this.makeReplayCode()
@@ -576,7 +595,7 @@ GuideObj.prototype.start_guide = function () {
         var guidename = undefined;
 
         //Pase the current guide XML for the guide name and add it to the local var
-        guidename = this.currentGuideXML.getElementsByTagName('guidename');
+        guidename = this.current_Guide_XML.getElementsByTagName('guidename');
 
         //Check if we have data for the guide name and throw an error if its undefined
         if (guidename == undefined) { throw "No guide name element was found"; }
@@ -675,7 +694,7 @@ GuideObj.prototype.start_guide = function () {
         }
 
         //Load the elements of the guide names 
-        guidenames = this.guideListXML.getElementsByTagName("guidename");
+        guidenames = this.guide_List_XML.getElementsByTagName("guidename");
 
         //loop though guide names elements to find the matching Attibute. 
         for (var i = 0; i < guidenames.length; i++) {
@@ -728,10 +747,10 @@ GuideObj.prototype.start_guide = function () {
         var dec_found = false;
 
         //Check if Current Guide XML is empty (if it is Thow an error)
-        if (this.currentGuideXML == null || this.currentGuideXML == undefined) { throw "currentGuideXML Empty" }
+        if (this.current_Guide_XML == null || this.current_Guide_XML == undefined) { throw "current_Guide_XML Empty" }
 
         //Parse Guide name
-        parsed_guidename = this.currentGuideXML.getElementsByTagName("guidename");
+        parsed_guidename = this.current_Guide_XML.getElementsByTagName("guidename");
 
         //Get the Guide version
         parsed_gude_ver = parsed_guidename[0].getAttribute("version");
@@ -770,7 +789,7 @@ GuideObj.prototype.start_guide = function () {
         var firstelement = undefined;
 
         //Parse the Current Guide XML for the elements and Load the Local
-        parsedXML = this.currentGuideXML.getElementsByTagName('element');
+        parsedXML = this.current_Guide_XML.getElementsByTagName('element');
 
         //Load the firstelement with the first Node in the list. 
         firstelement = parsedXML[0].getAttribute('elname');
@@ -907,7 +926,7 @@ GuideObj.prototype.start_guide = function () {
 //// Guide Element Object  ////
 
 //Guide element object
-    var Guide_ele = function (mainPage_object_in, arrayindex, classin, my_element_name_in) {
+    var Guide_ele = function (mainPage_object_in, arrayindex, my_element_name_in) {
 
         //assign object variables 
         this.name = my_element_name_in; //this objects name and This elements name in XML	
@@ -1036,7 +1055,7 @@ Guide_ele.prototype.make_guide_ele_disp = function () {
 Guide_ele.prototype.getquestion = function (ele_to_find) {
 
     //Load a Temp Var with the Parsed Result of looking through the current XML for element to Search for. 
-    var x = this.mainPage_object.currentGuideXML.getElementsByTagName(ele_to_find);
+    var x = this.mainPage_object.current_Guide_XML.getElementsByTagName(ele_to_find);
 
     //look through result XML for this element
     for (var i = 0; i < x.length; i++) {
@@ -1054,7 +1073,7 @@ Guide_ele.prototype.getquestion = function (ele_to_find) {
 Guide_ele.prototype.makeAnswerbuttons = function () {
 
     //Get the Current Loaded XML from the Main Page Object. Parse it for answers and Load it in to a Temp Var
-    var x = this.mainPage_object.currentGuideXML.getElementsByTagName('answer');
+    var x = this.mainPage_object.current_Guide_XML.getElementsByTagName('answer');
 
     //Look through the list of answers to find the answers for this element.
     for (var i = 0; i < x.length; i++) {

@@ -77,52 +77,6 @@ makeDiv = function (location, id, class_in, text_in) {
 }
 
 
-//Function to Load XML Asynchronously. Based on the Load with timeout From developer.mozilla.org
-//requires the args for URL, Timeout, and CallBack
-//Well take anynumber of args after the required
-//returns calls the callback on load and sends the Loaded XML and the Non-Required args Back. 
-function loadFile(sURL, timeout, fCallback /*, argumentToPass1, argumentToPass2, etc. */) {
-    //open the HTTP Request into a new Object
-    var ReqObj = new XMLHttpRequest();
-
-    //set the object to store its callback 
-    ReqObj.callback = fCallback;
-    //Slice the first 3 args off and store the rest of the areguments of this function for later use
-    ReqObj.arguments = Array.prototype.slice.call(arguments, 3);
-
-    //Open the get request with the Load values
-    ReqObj.open("get", sURL, true);
-
-    //set the Timeout setting in the request 
-    ReqObj.timeout = timeout;
-
-    //Send the Request
-    ReqObj.send(null);
-
-    //set On Load to an aynomus function that triggers when onload event sent. 
-    ReqObj.onload = function () {
-
-        //check if the ready state is the state done.
-        if (ReqObj.readyState === 4) {
-
-            //If ready stat is done, check if there are any errors.
-            if (ReqObj.status === 200) {
-
-                //add the response to the Be of the arguments
-                ReqObj.arguments.unshift(ReqObj.responseXML);
-
-                //If all is well send they call the Callback with the stored args
-                ReqObj.callback.apply(this, ReqObj.arguments);
-
-            //if all is not well, throw an error 
-            } else {
-                console.error(ReqObj.statusText);
-            }
-        }
-    };
-}
-
-
 
 ////---------------------////
 //// Main Guide Object  ////
@@ -302,27 +256,13 @@ GuideObj.prototype.handleEvent = function (event) {
             if (event.target.id == this.replay_code_submit.id) { this.loadreplay(); }
 
         }//end of try. Catch the errors and Run the error handler. 
-        catch (err) {errhandler(err, this.is_debugmode);}
+        catch (err) {this.error_handler(err, this.is_debugmode);}
 
 }
 
     ///////////////////////
     //General use methods//
     ///////////////////////
-
-    //find objects by index
-    //needs the index of the page object
-    GuideObj.prototype.PObj = function (indexin) {
-
-        //check input 
-        if (typeof (indexin) != 'number') { throw "indexin args Not type Number" } // check if indexin is a number
-        if (this.pageobjects[indexin] == undefined) { throw "Page Object not found by Index" } //throw if item is not found
-
-        //retun the found object
-        return this.pageobjects[indexin];
-
-    };
-
 
 
     //find object by name
@@ -341,6 +281,94 @@ GuideObj.prototype.handleEvent = function (event) {
     };
 
 
+
+
+//Function to Load XML Asynchronously. Based on the Load with timeout From developer.mozilla.org
+//requires the args for URL, Timeout, and CallBack
+//Well take anynumber of args after the required
+//returns calls the callback on load and sends the Loaded XML and the Non-Required args Back. 
+GuideObj.prototype.loadFile = function(sURL, timeout, fCallback /*, argumentToPass1, argumentToPass2, etc. */) {
+    //open the HTTP Request into a new Object
+    var ReqObj = new XMLHttpRequest();
+
+    //set the object to store its callback 
+    ReqObj.callback = fCallback;
+    //Slice the first 3 args off and store the rest of the areguments of this function for later use
+    ReqObj.arguments = Array.prototype.slice.call(arguments, 3);
+
+    //Open the get request with the Load values
+    ReqObj.open("get", sURL, true);
+
+    //set the Timeout setting in the request 
+    ReqObj.timeout = timeout;
+
+    //Send the Request
+    ReqObj.send(null);
+
+    //set On Load to an aynomus function that triggers when onload event sent. 
+    ReqObj.onload = function () {
+
+        //check if the ready state is the state done.
+        if (ReqObj.readyState === 4) {
+
+            //If ready stat is done, check if there are any errors.
+            if (ReqObj.status === 200) {
+
+                //add the response to the Be of the arguments
+                ReqObj.arguments.unshift(ReqObj.responseXML);
+
+                //If all is well send they call the Callback with the stored args
+                ReqObj.callback.apply(this, ReqObj.arguments);
+
+            //if all is not well, throw an error 
+            } else {
+                console.error(ReqObj.statusText);
+            }
+        }
+    };
+}
+
+
+
+
+//Error handler for Guide Site.
+//takes and error object as an argument and a Bool for debug mode. 
+//Debug true will display an alert error to the User. it can be force passed when needed.
+//Looks for the error message, a string of a numeric code, in the Error XML
+//If the error code is found, It displays the found error else it displays a Defult error.
+GuideObj.prototype.error_handler = function (error, debugmode) {
+    //Local Variable for Error string.
+    var disp_error = "The guide has enountered an error. Please reload the page and try again. If the problem presists, contact the helpdesk for further support.";
+
+    var err_string = "";
+
+    //Local var for Parsed Guide
+    var parsed_errors = null;
+
+    //Check if XML is null If not Parse it
+    if (this.guide_errors_XML != null) {
+        //Parse XML
+        parsed_errors = this.guide_errors_XML.getElementsByTagName(error.message);
+
+        //If the results are found load them
+        if (parsed_errors[0].childNodes[0] != null || parsed_errors[0].childNodes[0] != undefined) {
+            disp_error = parsed_errors[0].childNodes[0].nodeValue;
+        }
+    }
+
+    //build the error message display
+    err_string = 'Error Message: ' + disp_error;
+    //err_string += '\n Error Code: ' + error.message;
+    err_string += '\n\n Error stack \n' + error.stack;
+
+    //Check Debugmode - We ignore all None True values.
+    //If true display a alert.
+    //If false, display to console. 
+    if (debugmode == true) { alert(err_string);}
+    else {console.log(err_string);}
+
+} 
+
     /////////////////
     //Guide methods//
     /////////////////
@@ -354,51 +382,68 @@ GuideObj.prototype.handleEvent = function (event) {
         try {//try for Loading the Guide. Will catch errors and pass them to the error system.
 
             //Load guide for XML list with a timeout loaded from the config file.
-            loadFile(this.guide_List_XMLLoc, this.timout, this.xmlLoadHandler, 2, this)
-            
+            this.loadFile(this.guide_List_XMLLoc, this.timout, this.xmlLoadHandler, 2, this)
+
+            //Stub for Testing errors XML 
+            this.loadFile("/XML/XML_Errors/en_us_errors.xml", this.timout, this.xmlLoadHandler, 5, this)
+
         }
-        catch (err) { errhandler(err, this.is_debugmode); }
+        catch (err) { this.error_handler(err, this.is_debugmode); }
+    }
 
-
-
+    //Primary controler function for the Guide. As XML is Loaded it triggers the next componet for most Guide actions
     //function that is used as the Callback for Asynchronous XML calls.
     //Loadsthe varible sent with the XML response. 
     //once Loaded, It will trigger the Make Guide display
     GuideObj.prototype.xmlLoadHandler = function (XML_in, loadID, objref) {
+        //Try for XML Loader. This will handle most Program errors. 
+        try {
 
-        //Takes the varible sent to the XML request and Load it
-        switch (loadID) {
+            //Takes the varible sent to the XML request and Load it
+            switch (loadID) {
 
-            //If Load ID is 1 Load Configuration Variable   
-            case 1:
-                objref.guide_config_XML = XML_in;
-                //ToDo: - Parse and Load Config XML
-                break;
+                //If Load ID is 1 Load Configuration Variable     
+                case 1:
+                    objref.guide_config_XML = XML_in;
+                    //ToDo: - Parse and Load Config XML
+                    break;
 
-            //If Load ID is 2 Set the guide_List_XML Var then Run the Make Guide Display  
-            case 2:
-                objref.guide_List_XML = XML_in;
-                objref.make_guide_display();
-                break;
+                //If Load ID is 2 Set the guide_List_XML Var then Run the Make Guide Display    
+                case 2:
+                    objref.guide_List_XML = XML_in;
+                    objref.make_guide_display();
+                    break;
 
-            //If Load ID is 3 Set the Current XML and Run the Function to statrt the guide   
-            case 3:
-                objref.current_Guide_XML = XML_in;
-                objref.start_guide();
-                break;
+                //If Load ID is 3 Set the Current XML and Run the Function to statrt the guide     
+                case 3:
+                    objref.current_Guide_XML = XML_in;
+                    objref.start_guide();
+                    break;
 
-            //If Load ID is 4 Sent the Current XML and Run the Replay.!!!! Currently a stub  
-            case 4:
-                objref.current_Guide_XML = XML_in;
-                objref.replayGuide();
-                break;
+                //If Load ID is 4 Set the Current XML and Run the Replay.  
+                case 4:
+                    objref.current_Guide_XML = XML_in;
+                    objref.replayGuide();
+                    break;
 
-            //Return false of this is called with a Load ID that is not listed  
-            default:
-                return false;
+                //If id is 5, Set guide_errors_XML XML  
+                case 5:
+                    objref.guide_errors_XML = XML_in;
+                    break;
+
+                //If id is 6, Set guide_messages_XML XML  
+                case 6:
+                    objref.guide_messages_XML = XML_in;
+                    //ToDo: - Parse and Load user messages
+                    break;
+
+                //Return false of this is called with a Load ID that is not listed    
+                default:
+                    return false;
+            }
+
         }
-
-
+        catch (err) { objref.error_handler(err, objref.is_debugmode); }
     }
 
 
@@ -408,9 +453,6 @@ GuideObj.prototype.handleEvent = function (event) {
     //Will Return False untill all required varable ahve content 
     //calls functions to add Make and display Form. This will disply as
     GuideObj.prototype.make_guide_display = function () {
-
-
-
 
         //forum Heading
         this.myheading = makeDiv(this.pagespace, "guide_heading", "guide_heading");
@@ -422,7 +464,7 @@ GuideObj.prototype.handleEvent = function (event) {
         this.ReplayCodeBoxDiv.innerHTML += '<lable> ' + this.replayBox_lable + '<input type = "text" class="ReplayCodeBox" id="ReplayCodeBox"></lable>';
 
         //add a submitt butt for the Guide Code 
-        this.replay_code_submit = makeDiv(this.ReplayCodeBoxDiv,"replay_code_submit","replay_code_submit", this.replay_code_submit_value);
+        this.replay_code_submit = makeDiv(this.ReplayCodeBoxDiv, "replay_code_submit", "replay_code_submit", this.replay_code_submit_value);
 
         //add the replay Code box as a object var for later referance. 
         this.replayinput = byid("ReplayCodeBox");
@@ -439,12 +481,14 @@ GuideObj.prototype.handleEvent = function (event) {
 
         this.myheading.innerHTML += '<br>';
 
-        this.add_start_button();
+        //add the start button
+        this.start_button = makeDiv(this.myheading,"start_button","start_button",this.start_button_value)
+
         this.makeform("guide_selection_forum");
         this.myheading.innerHTML += '<br>';
 
         //make the copy button.
-        this.copy_button = makeDiv(this.myheading,"copy_button","copy_button",this.copy_button_value);
+        this.copy_button = makeDiv(this.myheading, "copy_button", "copy_button", this.copy_button_value);
 
         //hide the copy button.
         byid(this.copy_button.id).setAttribute("style", "display: none");
@@ -496,82 +540,73 @@ GuideObj.prototype.handleEvent = function (event) {
     };
 
 
-    
-    //add the start button
-    GuideObj.prototype.add_start_button = function () {
-
-        // add button to start guide 
-        this.start_button = makeDiv(this.myheading,"start_button","start_button",this.start_button_value)
-        
-    };
-
-
-
 //Look at the form to see what was selected. If something was selected, Load that Guide
 //If nothing was seleted report an message. 
 //this doesnt not check for speical cases. 
 //If only one guide is found with the Context Engine its assumed the context Engine set it as the default.
-GuideObj.prototype.findSelGuid = function(){
+    GuideObj.prototype.findSelGuid = function () {
+
         var found_Guide = undefined; //Place to hold string for the found Guide
         var selected_found = false; //Bool used as a Trigger for valitaion
 
-            //get guide select Buttons
-            var guide_select_buttons = document.getElementsByName("guideselect");
+        //get guide select Buttons
+        var guide_select_buttons = document.getElementsByName("guideselect");
 
 
-            //look through list of buttons  and look for what is pressed
-            for (var i = 0; i < guide_select_buttons.length; i++) {
+        //look through list of buttons  and look for what is pressed
+        for (var i = 0; i < guide_select_buttons.length; i++) {
 
-                //if current button is selected store it and mark that a button was found. 
-                if (guide_select_buttons[i].checked == true) {
-                    
-                    
-                    //Check if XML has content in it before adding that content to the found_Guide var
-                    if (guide_select_buttons[i].getAttribute("data-guidetarget") != undefined && guide_select_buttons[i].getAttribute("data-guidetarget") != ""){ 
+            //if current button is selected store it and mark that a button was found. 
+            if (guide_select_buttons[i].checked == true) {
+
+
+                //Check if XML has content in it before adding that content to the found_Guide var
+                if (guide_select_buttons[i].getAttribute("data-guidetarget") != undefined && guide_select_buttons[i].getAttribute("data-guidetarget") != "") {
                     //Set the found guide Var to the String of the Destination found in the XML
-                        found_Guide = guide_select_buttons[i].getAttribute("data-guidetarget");
-                    }
+                    found_Guide = guide_select_buttons[i].getAttribute("data-guidetarget");
                 }
             }
-            //If found_Guide has no contents, assume it not selected and return a user error
-            if(found_Guide == undefined) { alert("Please select a Guide."); return false}
+        }
+        //If found_Guide has no contents, assume it not selected and return a user error
+        if (found_Guide == undefined) { alert("Please select a Guide."); return false }
 
-            //call the Load function to get the XML content for the Guide
-            //THis will Trigger Start_Guide() with the xmlLoadHandler. (Load ID 3)
-            loadFile(found_Guide, this.timout, this.xmlLoadHandler, 3, this)
+        //call the Load function to get the XML content for the Guide
+        //This will Trigger Start_Guide() with the xmlLoadHandler. (Load ID 3)
+        this.loadFile(found_Guide, this.timout, this.xmlLoadHandler, 3, this)
 
-};
+    };
 
 
 //Once the XML is Loaded for the Current Guide - Start the Guide
 //This calls the Guide element Object to make the Guide Itself.
 //Will also Hide buttons that should not be use after the Guide starts
-GuideObj.prototype.start_guide = function () {
-    var list_of_ele = null; //holder for the list of elements
-    var firstelement = null; //holder for the String naming the first element in the Guide.
+    GuideObj.prototype.start_guide = function () {
 
-    //Update the Guide Info variables
-    this.getGuideInfo();
+        var list_of_ele = null; //holder for the list of elements
+        var firstelement = null; //holder for the String naming the first element in the Guide.
 
-    //Parses the Guide XML for all Elements and loads them. 
-    list_of_ele = this.current_Guide_XML.getElementsByTagName('element');
+        //Update the Guide Info variables
+        this.getGuideInfo();
 
-    //Load the firstelement with the first Node in the list. 
-    firstelement = list_of_ele[0].getAttribute('elname');
+        //Parses the Guide XML for all Elements and loads them. 
+        list_of_ele = this.current_Guide_XML.getElementsByTagName('element');
 
-    //Start the guide by its first element 
-    this.make_guide_ele(firstelement);
+        //Load the firstelement with the first Node in the list. 
+        firstelement = list_of_ele[0].getAttribute('elname');
 
-    //hide the start button once the its been used so it can not me triggered again. 
-    byid("start_button").setAttribute("style", "display: none");
+        //Start the guide by its first element 
+        this.make_guide_ele(firstelement);
 
-    //Hide the Launch button for the Guide Repete function. 
-    byid("replay_code_submit").setAttribute("style", "display: none");
+        //hide the start button once the its been used so it can not me triggered again. 
+        byid("start_button").setAttribute("style", "display: none");
 
-    //Display the Copy Button
-    byid(this.copy_button.id).setAttribute("style", "display: initial");
+        //Hide the Launch button for the Guide Repete function. 
+        byid("replay_code_submit").setAttribute("style", "display: none");
 
-};
+        //Display the Copy Button
+        byid(this.copy_button.id).setAttribute("style", "display: initial");
+
+    };
 
 
     //make a guide element
@@ -700,7 +735,7 @@ GuideObj.prototype.start_guide = function () {
         for (var i = 0; i < guidenames.length; i++) {
             if (guidenames[i].getAttribute("guideid").toLowerCase() == this.usableinput.guidename) {
                 //request the load of the current XML
-                loadFile(guidenames[i].getAttribute("guideloc"), this.timout, this.xmlLoadHandler, 4, this)
+                this.loadFile(guidenames[i].getAttribute("guideloc"), this.timout, this.xmlLoadHandler, 4, this)
                 return true;
             }
         }
@@ -1022,7 +1057,7 @@ GuideObj.prototype.start_guide = function () {
             //check if what was clicked is a reset button - if it was, reload the Page
             if (event.target.className == this.reset_button.className) { location.reload(); }
     }
-    catch (err) {errhandler(err, this.is_debugmode);}
+    catch (err) {this.error_handler(err, this.is_debugmode);}
 }
 
 

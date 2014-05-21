@@ -109,3 +109,10 @@
 
 2014-05-19:
 1. Added all variables to handle current planned additions.
+
+2014-05-20:
+1. Added New Error handler function.
+2. Removed outdatded un-used variables.
+3. Updated folder structor for storing XML.
+5. Added Error XML file.
+6. Test Error Function works for Defult condition and with XML error.

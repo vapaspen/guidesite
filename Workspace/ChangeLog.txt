@@ -24,7 +24,7 @@
 1. removed the custome timeout function to support better compatiblity. 
 
 2014-04-16:
-1. added Varible to Hold Timeout Time and XML COnFix file
+1. added Varible to Hold Timeout Time and XML COnFig file
 2. Added a Case for Loading files for Current Guide XML (3) and Confix XML (1)
 
 2014-04-17:
@@ -102,10 +102,10 @@
 2. Added Commented Definiations for Button variables. 
 
 2014-05-11:
-1. Added CSS functionality for buttons
+1. Added CSS functionality for buttons.
 2. Added makediv functionality for making buttons and added variables to hold div referance.
-3. Created a Template for XML files
-4. Created a Demo Guide with images 
+3. Created a Template for XML files.
+4. Created a Demo Guide with images.
 
 2014-05-19:
 1. Added all variables to handle current planned additions.
@@ -116,3 +116,9 @@
 3. Updated folder structor for storing XML.
 5. Added Error XML file.
 6. Test Error Function works for Defult condition and with XML error.
+
+2014-05-21:
+1. Updated XML Templates to add Config file and Guide list. And added more commenting to file.
+2. Added Variables to hold XML locations.
+3. Created a COnfiguration XML file.
+4. UPdated Error function to correct handle cases where an error is thrown but is not found in the XML.

@@ -198,6 +198,21 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
 
     //-----XML Storage variables-----//
 
+    //location of ConfigXML
+    this.config_XML_path = null;
+
+    //Location of Error XML
+    this.errors_XML_path = null;
+
+    //Location of Guid Lists XML
+    this.guide_list_XML_path = null;
+
+    //Location of user messages XML
+    this.user_msg_XML_path = null;
+
+    //Array of found Guids to offer the user
+    this.found_guides = new Array();
+
     //XML for Configuration file
     this.guide_config_XML = null;
 
@@ -217,7 +232,6 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
 
     //XML for the Current working Guide
     this.current_Guide_XML = null;
-
 
     //-------------------------------//
 
@@ -351,7 +365,7 @@ GuideObj.prototype.error_handler = function (error, debugmode) {
         parsed_errors = this.guide_errors_XML.getElementsByTagName(error.message);
 
         //If the results are found load them
-        if (parsed_errors[0].childNodes[0] != null || parsed_errors[0].childNodes[0] != undefined) {
+        if (parsed_errors[0] != null || parsed_errors[0] != undefined) {
             disp_error = parsed_errors[0].childNodes[0].nodeValue;
         }
     }

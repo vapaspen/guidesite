@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>
+    <!-- XML Locations start -->
+    <guide_list></guide_list>
+
+    <error_msg></error_msg>
+
+    <user_msg></user_msg>
+    <!-- XML Locations End ---->
+
+
+
+    <!-- General Settings start -->
+    <max_timeout>2000</max_timeout><!--Timeout setting for XML requests in Millisecons-->
+
+    <debug_mode>true</debug_mode><!--Is the Site in Debug mode (Vebrose Errors) Setting is a Boolen-->
+    <!-- General Settings end  ---->
+
+
+
+
+    <!-- General Messages start -->
+    <heading_text>![CDATA[Welcome to the 24/7 Support agent Guided assistance Page!]]</heading_text>
+    
+    <replay_box_text>![CDATA[Guide Code:]]</replay_box_text>
+
+    <no_answer>![CDATA[Thank you for using the Helpdesk Guide System.]]</no_answer>
+    <!-- General Messages End ---->
+
+
+</config>

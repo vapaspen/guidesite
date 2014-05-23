@@ -163,10 +163,11 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
     this.replayBox_lable = "Guide Code:";
 
     //heading Text 
-    this.heading_Text = "Welcome to the 24/7 Support agent Guided assistance Page!";
+    //this.heading_Text = "Welcome to the 24/7 Support agent Guided assistance Page!";
+    this.heading_Text = "";
 
     //Guide elements for not having an answer. 
-    this.NoAnswewr = "Thank you for using the Helpdesk Guide System";
+    this.no_Answewr = "Thank you for using the Helpdesk Guide System";
 
     //---------------------------//
 
@@ -235,10 +236,15 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
 
     //-------------------------------//
 
+    //-----configuration variables-----//
+    this.timout = 2000;
+
+    this.is_debugmode = is_debugmode_flage;
+
+    //---------------------------------//
+
     //Object to hold the parsed Input 
     this.usableinput = new Parseinput();
-
-    this.timout = 2000;
 
     this.replayinput = undefined;
 
@@ -249,8 +255,6 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
     this.guideID = undefined;
 
     this.replaycode = undefined;
-
-    this.is_debugmode = is_debugmode_flage;
 
     this.guide_List_XMLLoc = xml_stub;
 
@@ -304,7 +308,6 @@ GuideObj.prototype.handleEvent = function (event) {
 GuideObj.prototype.loadFile = function(sURL, timeout, fCallback /*, argumentToPass1, argumentToPass2, etc. */) {
     //open the HTTP Request into a new Object
     var ReqObj = new XMLHttpRequest();
-
     //set the object to store its callback 
     ReqObj.callback = fCallback;
     //Slice the first 3 args off and store the rest of the areguments of this function for later use
@@ -360,7 +363,7 @@ GuideObj.prototype.error_handler = function (error, debugmode) {
     var parsed_errors = null;
 
     //Check if XML is null If not Parse it
-    if (this.guide_errors_XML != null) {
+    if (this.guide_errors_XML != null && this.guide_errors_XML != undefined) {
         //Parse XML
         parsed_errors = this.guide_errors_XML.getElementsByTagName(error.message);
 
@@ -372,14 +375,14 @@ GuideObj.prototype.error_handler = function (error, debugmode) {
 
     //build the error message display
     err_string = 'Error Message: ' + disp_error;
-    //err_string += '\n Error Code: ' + error.message;
     err_string += '\n\n Error stack \n' + error.stack;
 
     //Check Debugmode - We ignore all None True values.
     //If true display a alert.
-    //If false, display to console. 
-    if (debugmode == true) { alert(err_string);}
-    else {console.log(err_string);}
+    //If false, display to console.
+    alert(err_string); 
+            
+        
 
 } 
 
@@ -392,73 +395,155 @@ GuideObj.prototype.error_handler = function (error, debugmode) {
     //Loads the XML for the Guide including the XML for the Settings. 
     //XML is triggered Asynchronously with a Timeout at the start.
     //all XML request use the next function as a Call back
-    GuideObj.prototype.active_guide = function () {
-        try {//try for Loading the Guide. Will catch errors and pass them to the error system.
+GuideObj.prototype.active_guide = function () {
+    try {//try for Loading the Guide. Will catch errors and pass them to the error system.
 
-            //Load guide for XML list with a timeout loaded from the config file.
-            this.loadFile(this.guide_List_XMLLoc, this.timout, this.xmlLoadHandler, 2, this)
+        //Load the config file to start the guide
+        this.loadFile("/XML/config_file/main_config.xml", this.timout, this.xmlLoadHandler, 1, this);
 
-            //Stub for Testing errors XML 
-            this.loadFile("/XML/XML_Errors/en_us_errors.xml", this.timout, this.xmlLoadHandler, 5, this)
-
-        }
-        catch (err) { this.error_handler(err, this.is_debugmode); }
     }
+    catch (err) { this.error_handler(err, this.is_debugmode); }
+}
+
+
+
+//function to parse config file and load guide variables. 
+//will only load them if they are found.
+//Starts the Load of 3 asycronus XML Loads.
+GuideObj.prototype.parse_config_and_load = function () {
+
+
+    //check if debug mode is defined
+    if (this.guide_config_XML.getElementsByTagName("debug_mode")[0].childNodes[0] != null || this.guide_config_XML.getElementsByTagName("debug_mode")[0].childNodes[0] != undefined) {
+        //if it is, store it.
+        this.is_debugmode = this.guide_config_XML.getElementsByTagName("debug_mode")[0].childNodes[0].nodeValue;
+    }
+
+
+    //check if timeout is defined
+    if (this.guide_config_XML.getElementsByTagName("max_timeout")[0].childNodes[0] != null || this.guide_config_XML.getElementsByTagName("max_timeout")[0].childNodes[0] != undefined) {
+        //if it is, store it.
+        this.timout = this.guide_config_XML.getElementsByTagName("max_timeout")[0].childNodes[0].nodeValue;
+
+    }
+
+
+    //check if Errors XML location is found
+    if (this.guide_config_XML.getElementsByTagName("error_msg")[0].childNodes[0] != null || this.guide_config_XML.getElementsByTagName("error_msg")[0].childNodes[0] != undefined) {
+        //If it is, store it and load it
+        this.errors_XML_path = this.guide_config_XML.getElementsByTagName("error_msg")[0].childNodes[0].nodeValue;
+
+        //load it
+        this.loadFile(this.errors_XML_path, this.timout, this.xmlLoadHandler, 5, this)
+    }
+    else {
+        //If it is not, throw an error.
+        throw new Error("gerr0");
+    }
+
+
+    //check if Guide List XML location is found
+    if (this.guide_config_XML.getElementsByTagName("guide_list")[0].childNodes[0] != null || this.guide_config_XML.getElementsByTagName("guide_list")[0].childNodes[0] != undefined) {
+        //If it is, store it and load it
+        this.guide_List_XML = this.guide_config_XML.getElementsByTagName("guide_list")[0].childNodes[0].nodeValue;
+
+        //load it
+        this.loadFile(this.guide_List_XML, this.timout, this.xmlLoadHandler, 2, this)
+    }
+    else {
+        //If it is not, throw an error.
+        throw new Error("gerr1");
+    }
+    
+
+    //check if User messages XML location is found!!!!
+    if (this.guide_config_XML.getElementsByTagName("user_msg")[0].childNodes[0] != null || this.guide_config_XML.getElementsByTagName("user_msg")[0].childNodes[0] != undefined) {
+        //If it is, store it and load it
+        alert(this.guide_config_XML.getElementsByTagName("user_msg")[0])
+        this.guide_messages_XML = this.guide_config_XML.getElementsByTagName("user_msg")[0].childNodes[0].nodeValue;
+
+
+        //load it
+        this.loadFile(this.guide_messages_XML, this.timout, this.xmlLoadHandler, 6, this)
+    }
+
+    //check if heading_text is defined
+    if (this.guide_config_XML.getElementsByTagName("heading_text")[0].childNodes[0] != null || this.guide_config_XML.getElementsByTagName("heading_text")[0].childNodes[0] != undefined) {
+        //if it is, store it.
+        this.heading_Text = this.guide_config_XML.getElementsByTagName("heading_text")[0].childNodes[0].nodeValue;
+    }
+
+    //check if replay_box_text is defined
+    if (this.guide_config_XML.getElementsByTagName("replay_box_text")[0].childNodes[0] != null || this.guide_config_XML.getElementsByTagName("replay_box_text")[0].childNodes[0] != undefined) {
+        //if it is, store it.
+        this.replayBox_lable = this.guide_config_XML.getElementsByTagName("replay_box_text")[0].childNodes[0].nodeValue;
+    }
+
+    //check if no_answer is defined
+    if (this.guide_config_XML.getElementsByTagName("no_answer")[0].childNodes[0] != null || this.guide_config_XML.getElementsByTagName("no_answer")[0].childNodes[0] != undefined) {
+        //if it is, store it.
+        this.replayBox_lable = this.guide_config_XML.getElementsByTagName("no_answer")[0].childNodes[0].nodeValue;
+    }
+
+}
+
+
+
 
     //Primary controler function for the Guide. As XML is Loaded it triggers the next componet for most Guide actions
     //function that is used as the Callback for Asynchronous XML calls.
     //Loadsthe varible sent with the XML response. 
     //once Loaded, It will trigger the Make Guide display
-    GuideObj.prototype.xmlLoadHandler = function (XML_in, loadID, objref) {
-        //Try for XML Loader. This will handle most Program errors. 
-        try {
+GuideObj.prototype.xmlLoadHandler = function (XML_in, loadID, objref) {
+    //Try for XML Loader. This will handle most Program errors. 
+    try {
 
-            //Takes the varible sent to the XML request and Load it
-            switch (loadID) {
+        //Takes the varible sent to the XML request and Load it
+        switch (loadID) {
 
-                //If Load ID is 1 Load Configuration Variable     
-                case 1:
-                    objref.guide_config_XML = XML_in;
-                    //ToDo: - Parse and Load Config XML
-                    break;
+            //If Load ID is 1 Load Configuration Variable       
+            case 1:
+                objref.guide_config_XML = XML_in;
+                objref.parse_config_and_load();
+                break;
 
-                //If Load ID is 2 Set the guide_List_XML Var then Run the Make Guide Display    
-                case 2:
-                    objref.guide_List_XML = XML_in;
-                    objref.make_guide_display();
-                    break;
+            //If Load ID is 2 Set the guide_List_XML Var then Run the Make Guide Display      
+            case 2:
+                objref.guide_List_XML = XML_in;
+                objref.make_guide_display();
+                break;
 
-                //If Load ID is 3 Set the Current XML and Run the Function to statrt the guide     
-                case 3:
-                    objref.current_Guide_XML = XML_in;
-                    objref.start_guide();
-                    break;
+            //If Load ID is 3 Set the Current XML and Run the Function to statrt the guide       
+            case 3:
+                objref.current_Guide_XML = XML_in;
+                objref.start_guide();
+                break;
 
-                //If Load ID is 4 Set the Current XML and Run the Replay.  
-                case 4:
-                    objref.current_Guide_XML = XML_in;
-                    objref.replayGuide();
-                    break;
+            //If Load ID is 4 Set the Current XML and Run the Replay.    
+            case 4:
+                objref.current_Guide_XML = XML_in;
+                objref.replayGuide();
+                break;
 
-                //If id is 5, Set guide_errors_XML XML  
-                case 5:
-                    objref.guide_errors_XML = XML_in;
-                    break;
+            //If id is 5, Set guide_errors_XML XML    
+            case 5:
+                objref.guide_errors_XML = XML_in;
+                break;
 
-                //If id is 6, Set guide_messages_XML XML  
-                case 6:
-                    objref.guide_messages_XML = XML_in;
-                    //ToDo: - Parse and Load user messages
-                    break;
+            //If id is 6, Set guide_messages_XML XML    
+            case 6:
+                objref.guide_messages_XML = XML_in;
+                //ToDo: - Parse and Load user messages
+                break;
 
-                //Return false of this is called with a Load ID that is not listed    
-                default:
-                    return false;
-            }
-
+            //Return false of this is called with a Load ID that is not listed      
+            default:
+                return false;
         }
-        catch (err) { objref.error_handler(err, objref.is_debugmode); }
+
     }
+    catch (err) { objref.error_handler(err, objref.is_debugmode); }
+}
 
 
     //Function for Building the display of the guide
@@ -1151,7 +1236,7 @@ Guide_ele.prototype.makeAnswerbuttons = function () {
     }
     //if the element has no Answers then display the end info in the Answer section 
     if (this.answerbuttons.length == 0) {
-        byid(this.aswerSpace).innerHTML += this.mainPage_object.NoAnswewr;
+        byid(this.aswerSpace).innerHTML += this.mainPage_object.no_Answewr;
     }
 
 }

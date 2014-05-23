@@ -9,14 +9,14 @@
 
     <!-- First element -->
 			<element elname="First Element">
-				<question>![CDATA[]]</question>
-				<answer atarget = "" >![CDATA[]]</answer>
+				<question><![CDATA[]]></question>
+				<answer atarget = "" ><![CDATA[]]></answer>
 			</element>
 			
     <!-- -->
 			<element elname="">
-				<question>![CDATA[]]</question>
-				<answer atarget = "" >![CDATA[]]</answer>
+				<question><![CDATA[]]></question>
+				<answer atarget = "" ><![CDATA[]]></answer>
 			</element>
 </Guide>
 
@@ -72,11 +72,11 @@
 
 
     <!-- General Messages start -->
-    <heading_text>![CDATA[]]</heading_text>
+    <heading_text><![CDATA[]]></heading_text>
     
-    <replay_box_text>![CDATA[]]</replay_box_text>
+    <replay_box_text><![CDATA[]]></replay_box_text>
 
-    <no_answer>![CDATA[]]</no_answer>
+    <no_answer><![CDATA[]]></no_answer>
     <!-- General Messages End ---->
 
 

@@ -122,3 +122,9 @@
 2. Added Variables to hold XML locations.
 3. Created a COnfiguration XML file.
 4. UPdated Error function to correct handle cases where an error is thrown but is not found in the XML.
+
+2014-05-22:
+1. Created added and tested the a function to parse config file and log XML based on its Locations.
+2. creadted and test config file
+3. Updated Error hander to better handle unknown errors.
+4.BUG: error handler is currently not working with debug mode. Currently Errors only alert.

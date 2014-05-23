@@ -1,39 +1,78 @@
 //------------------Updated needed for this function to be possible
 
-//Error handler for Guide Site.
-//takes and error object as an argument and a Bool for debug mode. 
-//Debug true will display an alert error to the User. it can be force passed when needed.
-//Looks for the error message, a string of a numeric code, in the Error XML
-//If the error code is found, It displays the found error else it displays a Defult error.
-GuideObj.prototype.error_handler = function (error, debugmode) {
-    //Local Variable for Error string.
-    var disp_error = "The guide and enountered an error. Please reload the page and try again. If the problem presists, contact the helpdesk for further support.";
-
-    var err_string = "";
-
-    //Local var for Parsed Guide
-    var parsed_errors = null;
-
-    //Check if XML is null If not Parse it
-    if (this.guide_errors_XML != null) {
-        //Parse XML
-        parsed_errors = this.guide_errors_XML.getElementsByTagName(error.message);
-
-        //If the results are found load them
-        if (parsed_errors[0].childNodes[0].nodeValue != null || parsed_errors[0].childNodes[0].nodeValue != undefined) {
-            disp_error = parsed_errors[0].childNodes[0].nodeValue;
-        }
+//function to parse config file and load guide variables. 
+//will only load them if they are found.
+//Starts the Load of 3 asycronus XML Loads.
+GuideObj.prototype.parse_config_and_load = function () {
+    //check if debug mode is defined
+    if (this.guide_config_XML.getElementsByTagName("debug_mode")[0] != null || this.guide_config_XML.getElementsByTagName("debug_mode")[0] != undefined) {
+        //if it is, store it.
+        this.is_debugmode = this.guide_config_XML.getElementsByTagName("debug_mode")[0].childNodes[0].nodeValue;
     }
 
-    //build the error message display
-    err_string = 'Error Message: ' + disp_error;
-    err_string += '\n Error Code: ' + error.message;
-    err_string += '\n\n Error stack \n' + error.stack;
 
-    //Check Debugmode - We ignore all None True values.
-    //If true display a alert.
-    //If false, display to console. 
-    if (debugmode == true) { alert(err_string);}
-    else {console.log(err_string);}
+    //check if timeout is defined
+    if (this.guide_config_XML.getElementsByTagName("max_timeout")[0] != null || this.guide_config_XML.getElementsByTagName("max_timeout")[0] != undefined) {
+        //if it is, store it.
+        this.timout = this.guide_config_XML.getElementsByTagName("max_timeout")[0].childNodes[0].nodeValue;
 
-} 
+    }
+
+
+    //check if Errors XML location is found
+    if (this.guide_config_XML.getElementsByTagName("error_msg")[0] != null || this.guide_config_XML.getElementsByTagName("error_msg")[0] != undefined) {
+        //If it is, store it and load it
+        this.guide_errors_XML = this.guide_config_XML.getElementsByTagName("error_msg")[0].childNodes[0].nodeValue;
+
+        //load it
+        //this.loadFile(this.guide_errors_XML, this.timout, this.xmlLoadHandler, 5, this)
+    }
+    else {
+        //If it is not, throw an error.
+        throw new Error("gerr0");
+    }
+
+
+    //check if Guide List XML location is found
+    if (this.guide_config_XML.getElementsByTagName("guide_list")[0] != null || this.guide_config_XML.getElementsByTagName("guide_list")[0] != undefined) {
+        //If it is, store it and load it
+        this.guide_List_XML = this.guide_config_XML.getElementsByTagName("guide_list")[0].childNodes[0].nodeValue;
+
+        //load it
+        //this.loadFile(this.guide_List_XML, this.timout, this.xmlLoadHandler, 2, this)
+    }
+    else {
+        //If it is not, throw an error.
+        throw new Error("gerr1");
+    }
+
+    //check if User messages XML location is found
+    if (this.guide_config_XML.getElementsByTagName("user_msg")[0] != null || this.guide_config_XML.getElementsByTagName("user_msg")[0] != undefined) {
+        //If it is, store it and load it
+        this.guide_messages_XML = this.guide_config_XML.getElementsByTagName("user_msg")[0].childNodes[0].nodeValue;
+
+        //load it
+        //this.loadFile(this.guide_messages_XML, this.timout, this.xmlLoadHandler, 6, this)
+    }
+
+
+    //check if heading_text is defined
+    if (this.guide_config_XML.getElementsByTagName("heading_text")[0] != null || this.guide_config_XML.getElementsByTagName("heading_text")[0] != undefined) {
+        //if it is, store it.
+        this.heading_Text = this.guide_config_XML.getElementsByTagName("heading_text")[0].childNodes[0].nodeValue;
+    }
+
+    //check if replay_box_text is defined
+    if (this.guide_config_XML.getElementsByTagName("replay_box_text")[0] != null || this.guide_config_XML.getElementsByTagName("replay_box_text")[0] != undefined) {
+        //if it is, store it.
+        this.replayBox_lable = this.guide_config_XML.getElementsByTagName("replay_box_text")[0].childNodes[0].nodeValue;
+    }
+
+    //check if no_answer is defined
+    if (this.guide_config_XML.getElementsByTagName("no_answer")[0] != null || this.guide_config_XML.getElementsByTagName("no_answer")[0] != undefined) {
+        //if it is, store it.
+        this.replayBox_lable = this.guide_config_XML.getElementsByTagName("no_answer")[0].childNodes[0].nodeValue;
+    }
+
+}
+

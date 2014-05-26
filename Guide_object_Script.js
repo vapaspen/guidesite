@@ -16,7 +16,7 @@ function byid(idname) {
             working_ID = idname.id;
         }
         catch(e)
-        {throw "byID Error. Not type String Or HTML ObJ";}
+        {throw new Error("gerr10");}
     }
         
     
@@ -25,7 +25,7 @@ function byid(idname) {
     var element = document.getElementById(working_ID);
 
     // throw ID undefind if ID is not found
-    if(element == undefined){throw working_ID + " ID undefined";} 
+    if(element == undefined){throw new Error("gerr12");} 
 
     //Retrun the found element 
     return element;
@@ -42,8 +42,8 @@ makeDiv = function (location, id, class_in, text_in) {
 
     //validate the input of required Args
     //If the input is missing throw and error
-    if (typeof(id) == "undefined") { throw "Args location Undefind"; }
-    if (typeof(id) == "undefined") { throw "Args id Undefind"; }
+    if (typeof(location) == "undefined") { throw new Error("gerr20"); }
+    if (typeof(id) == "undefined") { throw new Error("gerr21"); }
 
 
     //make Local vars with strings
@@ -81,17 +81,18 @@ makeDiv = function (location, id, class_in, text_in) {
 ////---------------------////
 //// Main Guide Object  ////
 
-var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
+var GuideObj = function (current_page_space, config_file_loc, is_debugmode_flage) {
 
     //Validate inputs
     //current_page_space
-    if (typeof (current_page_space) != "string") { throw "current_page_space args Not type String"; }
+    if (typeof (current_page_space) != "string") { throw new Error("gerr30"); }
     //is_debugmod
-    if (typeof (is_debugmode_flage) != "boolean" && typeof (is_debugmode_flage) != undefined) { throw "is_debugmode args not valid type" }
+    if (typeof (is_debugmode_flage) != "boolean" && typeof (is_debugmode_flage) != undefined) { throw new Error("gerr31"); }
 
     //Main Page Object variables
     this.name = current_page_space;
 
+    //Main array of all Guide elements on the Page
     this.pageobjects = new Array();
 
     //---Container Variables---//
@@ -113,6 +114,10 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
     //fourm for guide selection
     //(ID:"guide_selection_forum" Class: "guide_selection_forum" )
     this.guide_selection_forum = undefined;
+
+    //Input Box for the Replay code
+    //(ID:"ReplayCodeBox" Class: "" )
+    this.replayinput = undefined;
 
     //-------------------//
 
@@ -200,7 +205,7 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
     //-----XML Storage variables-----//
 
     //location of ConfigXML
-    this.config_XML_path = null;
+    this.config_XML_path = config_file_loc;
 
     //Location of Error XML
     this.errors_XML_path = null;
@@ -210,9 +215,6 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
 
     //Location of user messages XML
     this.user_msg_XML_path = null;
-
-    //Array of found Guids to offer the user
-    this.found_guides = new Array();
 
     //XML for Configuration file
     this.guide_config_XML = null;
@@ -237,26 +239,54 @@ var GuideObj = function (current_page_space, xml_stub, is_debugmode_flage) {
     //-------------------------------//
 
     //-----configuration variables-----//
+
+    //Global timeout for XML request.  
     this.timout = 2000;
 
+    //Flag for verbos or covert errors. config file over rights this setting. 
     this.is_debugmode = is_debugmode_flage;
 
     //---------------------------------//
 
-    //Object to hold the parsed Input 
-    this.usableinput = new Parseinput();
+    //-----Replay variables-----//
 
-    this.replayinput = undefined;
-
+    //Has the Reply mode been triggered. 
     this.isReplay = false;
 
+    //Parse verion of the guide being viewed
     this.guideVersion = undefined;
 
+    //Parsed ID of the guide being viewed
     this.guideID = undefined;
 
+    //result Replcode currently displayed in Input box. 
     this.replaycode = undefined;
 
-    this.guide_List_XMLLoc = xml_stub;
+    //Object to hold the parsed Input.
+    //Has a function for Parse the replay gide Input  
+    this.usableinput = new Parseinput();
+
+    //--------------------------//
+
+    //----Context Engine Variables----//
+
+    //Store the Calling URL passed into system.
+    this.calling_URL = undefined;
+
+    //Store when passed or found the Domain
+    this.context_domain = undefined;
+
+    //Store when passed or found the Location
+    this.context_location = undefined;
+
+    //Store when passed or found the Error
+    this.context_error = undefined;
+
+    //Array of found Guids to offer the user
+    this.found_guides = new Array();
+
+    //--------------------------------//
+
 
     //add event handler to copy button
     this.pagespace.addEventListener("click", this, true);
@@ -286,14 +316,14 @@ GuideObj.prototype.handleEvent = function (event) {
     //find object by name
     GuideObj.prototype.PObj = function (boxid) {
 
-        if (typeof (boxid) != "string") { throw "indexin args Not type String" } // check if Box ID is a String
+        if (typeof (boxid) != "string") { throw new Error("gerr40"); } // check if Box ID is a String
         var i = 0;
 
         //loop through the array of objects to try to find teh correct object. 
         while (this.pageobjects[i].name != boxid && i < this.pageobjects.length) {
             i++;
         }
-        if (this.pageobjects[i] == undefined) { throw "Page Object not found by Index"} //throw if object is not found
+        if (this.pageobjects[i] == undefined) { throw new Error("gerr41");} //throw if object is not found
         return this.pageobjects[i];
 
     };
@@ -391,15 +421,27 @@ GuideObj.prototype.error_handler = function (error, debugmode) {
     /////////////////
 
 
-    //Function called to activate the Guide
-    //Loads the XML for the Guide including the XML for the Settings. 
-    //XML is triggered Asynchronously with a Timeout at the start.
-    //all XML request use the next function as a Call back
-GuideObj.prototype.active_guide = function () {
+//Function called to activate the Guide
+//Takes context Engine variables as paramiters.
+//Context Engine variables are not required, if none are entered a default guide list will be displayed. 
+//XML load for the Config file is triggered with a default timeout of 2000ms
+GuideObj.prototype.activate_guide = function (calling_URL_in, domain_in, location_in, error_in) {
     try {//try for Loading the Guide. Will catch errors and pass them to the error system.
 
+        //store calling_URL_in only if a string has been sent into it.
+        if (typeof (calling_URL_in) == "string") { this.calling_URL = calling_URL_in; }
+
+        //store domain_in only if a string has been sent into it.
+        if (typeof (domain_in) == "string") { this.context_domain = domain_in; }
+
+        //store location_in only if a string has been sent into it.
+        if (typeof (location_in) == "string") { this.context_location = location_in; }
+
+        //store error_in only if a string has been sent into it.
+        if (typeof (error_in) == "string") { this.context_error = error_in; }
+
         //Load the config file to start the guide
-        this.loadFile("/XML/config_file/main_config.xml", this.timout, this.xmlLoadHandler, 1, this);
+        this.loadFile(this.config_XML_path, this.timout, this.xmlLoadHandler, 1, this);
 
     }
     catch (err) { this.error_handler(err, this.is_debugmode); }
@@ -438,7 +480,7 @@ GuideObj.prototype.parse_config_and_load = function () {
     }
     else {
         //If it is not, throw an error.
-        throw new Error("gerr0");
+        throw new Error("gerr50");
     }
 
 
@@ -452,7 +494,7 @@ GuideObj.prototype.parse_config_and_load = function () {
     }
     else {
         //If it is not, throw an error.
-        throw new Error("gerr1");
+        throw new Error("gerr51");
     }
     
 
@@ -602,7 +644,7 @@ GuideObj.prototype.xmlLoadHandler = function (XML_in, loadID, objref) {
         this.guide_selection_forum = byid(location);
 
         //validate input
-        if (typeof this.guide_List_XML === null || typeof this.guide_List_XML === undefined) { throw "Cant make Guide select buttons, guide_List_XML empty" }
+        if (typeof this.guide_List_XML === null || typeof this.guide_List_XML === undefined) { throw new Error("gerr80") }
 
         //initalize a var thats used to check if buttons are made. starts false and is set to ture when a button is made. checked at the end
         var made_buttons = false;
@@ -611,7 +653,7 @@ GuideObj.prototype.xmlLoadHandler = function (XML_in, loadID, objref) {
         guidenames = this.guide_List_XML.getElementsByTagName("guidename");
 
         //check to make sure that Guide names are found
-        if (guidenames === null || guidenames === undefined) { throw "Cant make Guide select buttons, guidenames empty" }
+        if (guidenames === null || guidenames === undefined) { throw new Error("gerr81") }
 
         //For each Guide Name that is Selectable make a button
         for (var i = 0; i < guidenames.length; i++) {
@@ -622,9 +664,9 @@ GuideObj.prototype.xmlLoadHandler = function (XML_in, loadID, objref) {
                 var input_guidID = guidenames[i].getAttribute("guideid");
 
                 //validate data from XML file
-                if (input_guidID == undefined) { throw "XML in Guide Names List not formatted Correctly. Guide ID is not found." }
-                if (input_name == undefined) { throw "XML in Guide Names List not formated Correctly. Guide of ID: " + input_guidID + " is missing NodeValue" }
-                if (input_target == undefined) { throw "XML in Guide Names List not formated Correctly. Guide of ID: " + input_guidID + " is missing Guideloc" }
+                if (input_guidID == undefined) { throw new Error("gerr82") }
+                if (input_name == undefined) { throw new Error("gerr83") }
+                if (input_target == undefined) { throw new Error("gerr84") }
 
                 //build buttons, add custome data for Guide target.
                 this.guide_selection_forum.innerHTML += input_name + ': <input type = "radio" name="guideselect" id="guideselect_' + input_guidID + '" data-guidetarget="' + input_target + '">';
@@ -635,7 +677,7 @@ GuideObj.prototype.xmlLoadHandler = function (XML_in, loadID, objref) {
             }
         }
         //last check to ensure that buttons are made
-        if (made_buttons == false) { throw "No Buttons were Made." }
+        if (made_buttons == false) { throw new Error("gerr85"); }
     };
 
 
@@ -732,21 +774,21 @@ GuideObj.prototype.xmlLoadHandler = function (XML_in, loadID, objref) {
         guidename = this.current_Guide_XML.getElementsByTagName('guidename');
 
         //Check if we have data for the guide name and throw an error if its undefined
-        if (guidename == undefined) { throw "No guide name element was found"; }
+        if (guidename == undefined) { throw new Error("gerr100"); }
 
 
         //parse the Local for the guide ID atribute and add the Result to object level Varible
         this.guideID = guidename[0].getAttribute('guideid');
 
         //check if object level Varible Guide ID variable is no longer "undefind" throw an error if it is
-        if (this.guideID === undefined) { throw "No guide ID Attribute was found"; }
+        if (this.guideID === undefined) { throw new Error("gerr101"); }
 
 
         //parse the Local for the guide version atribute and add the Result to object level Varible 
         this.guideVersion = guidename[0].getAttribute("version");
 
         //check if object level Varible Guide version variable is no longer "undefind" throw an error if it is
-        if (this.guideVersion == undefined) { throw "No guide Version Attribute was found"; }
+        if (this.guideVersion == undefined) { throw new Error("gerr102"); }
     };
 
 
@@ -881,7 +923,7 @@ GuideObj.prototype.xmlLoadHandler = function (XML_in, loadID, objref) {
         var dec_found = false;
 
         //Check if Current Guide XML is empty (if it is Thow an error)
-        if (this.current_Guide_XML == null || this.current_Guide_XML == undefined) { throw "current_Guide_XML Empty" }
+        if (this.current_Guide_XML == null || this.current_Guide_XML == undefined) { throw new Error("gerr140"); }
 
         //Parse Guide name
         parsed_guidename = this.current_Guide_XML.getElementsByTagName("guidename");
@@ -982,7 +1024,11 @@ GuideObj.prototype.xmlLoadHandler = function (XML_in, loadID, objref) {
 
 
 
-    //Remove the box
+    //Function to Remove a box from the display.
+    //Takes the element that is being removed as a HTML object
+    //Removes the found element and the element above it, then Re-makes that element above. 
+    //If it is at the Top, it will reset the Display as if the Guide was not selected yet.
+    //Checks beeing at the top by the index of the page Pag object. 
     GuideObj.prototype.remove_box = function (eleToRemove) {
         //find the old box
         var old_box = eleToRemove;

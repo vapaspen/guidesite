@@ -1,4 +1,53 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <errors>
-    <gerr1>Test works</gerr1>
+    <!--Test error message-->
+    <gerr1>Test work!</gerr1>
+
+
+    <!--By ID errors in the 10s-->
+    <gerr10>byID Error. Not type String.</gerr10>
+    <gerr12>Given ID name is Undefined.</gerr12>
+
+
+    <!--Make Div errors in the 20s-->
+    <gerr20>Args location Undefined.</gerr20>
+    <gerr21>Args id Undefined.</gerr21>
+
+
+    <!--Constructor Errors in the 30s-->
+    <gerr30>Current_page_space args Not type String.</gerr30>
+    <gerr31>is_debugmode args not valid type.</gerr31>
+
+
+    <!--Find Obj By Name Errors in the 40s-->
+    <gerr40>indexin args Not type String</gerr40>
+    <gerr41>Page Object not found by Index</gerr41>
+
+
+    <!--Error for config file Parser in the 50s-->
+    <gerr50>Error message file not found in config file.</gerr50>
+    <gerr51>Guide Lists file not found in config file.</gerr51>
+
+    <!--xmlLoadHandler errors in the 60s-->
+    
+
+
+    <!--makeform errors in the 80s-->
+    <gerr80>Cant make Guide select buttons, guide_List_XML empty.</gerr80>
+    <gerr81>Cant make Guide select buttons, guidenames empty.</gerr81>
+    <gerr82>XML in Guide Names List not formatted Correctly. Guide ID is not found.</gerr82>
+    <gerr83>XML in Guide Names List not formated Correctly. Selected Guide is missing NodeValue</gerr83>
+    <gerr84>XML in Guide Names List not formated Correctly. Selected Guide is missing Guideloc</gerr84>
+    <gerr85>No Buttons were Made.</gerr85>
+
+
+    <!--getGuideInfo errors in the 100s-->
+    <gerr100>No guide name element was found.</gerr100>
+    <gerr101>No guide ID Attribute was found.</gerr101>
+    <gerr102>No guide Version Attribute was found.</gerr102>
+
+
+    <!--check_replay_ver Errors in the 140s-->
+    <gerr140>current_Guide_XML Empty</gerr140>
+
 </errors>

@@ -37,7 +37,7 @@
 <!--Guid List Template Start -->
 
 <guide_list>
-    <guidename guideloc = "" guideid="" is_selectable="">[name]
+    <guidename guideloc = "" guideid="" is_selectable="" isdefault = "">[name]
         <location></location>
         <domain></domain>
         <error></error>

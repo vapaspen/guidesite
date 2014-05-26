@@ -128,3 +128,12 @@
 2. creadted and test config file
 3. Updated Error hander to better handle unknown errors.
 4.BUG: error handler is currently not working with debug mode. Currently Errors only alert.
+
+2014-05-23:
+1. Moved all existing error messages to the Error messages file with new error codes.
+2. Updated Comments for Remove Function to better explain its functinoality.
+3. Updated Guide variables comments to section off Replay Code Variables. 
+4. Added a Section in Guide variables for Content Engine Variables and added variables for context engine. 
+5. Updated Guide Object to take config file path as a Main args in. 
+6. Updated Activate Guide function to add if statements to Load Context engine variables if they are entered as strings in the pramiters of the function.
+7. Test Updated activate Guide function in and it Passed.

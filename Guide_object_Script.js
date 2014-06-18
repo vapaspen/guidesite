@@ -1,4 +1,4 @@
-//David Guides Assistances Site.
+ //David Guides Assistances Site.
 
 //Shorthand to make make typying document.getElementById quicker
 //needs a string or HTML obj as Input and assumes the element already exist
@@ -524,7 +524,7 @@ GuideObj.prototype.parse_config_and_load = function () {
     //check if no_answer is defined
     if (this.guide_config_XML.getElementsByTagName("no_answer")[0].childNodes[0] != null || this.guide_config_XML.getElementsByTagName("no_answer")[0].childNodes[0] != undefined) {
         //if it is, store it.
-        this.replayBox_lable = this.guide_config_XML.getElementsByTagName("no_answer")[0].childNodes[0].nodeValue;
+        this.no_Answewr = this.guide_config_XML.getElementsByTagName("no_answer")[0].childNodes[0].nodeValue;
     }
 
 }

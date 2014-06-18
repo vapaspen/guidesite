@@ -137,3 +137,6 @@
 5. Updated Guide Object to take config file path as a Main args in. 
 6. Updated Activate Guide function to add if statements to Load Context engine variables if they are entered as strings in the pramiters of the function.
 7. Test Updated activate Guide function in and it Passed.
+
+2014-05-28:
+1. Corrected an issue with the Config file not loading the correct variables. 

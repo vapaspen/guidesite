@@ -6,12 +6,12 @@
 
     <!--First Element -->
 			<element elname="First_Element">
-				<question><![CDATA[Please Select the browser you are currently using:]]></question>
+				<question><![CDATA[Please select the browser you are currently using:]]></question>
 				<answer atarget = "Chrome_CCC" ><![CDATA[Chrome:  <img src="/images/compatible_chrome.gif" alt="Google Chrome"></img>]]></answer>
                 <answer atarget = "Firefox_CCC" ><![CDATA[Firefox: <img src="/images/compatible_firefox.gif" alt="Firefox"></img>]]></answer>
                 <answer atarget = "IE_CCC" ><![CDATA[IE: <img src="/images/compatible_ie.gif" alt="Internet Exploer"></img>]]></answer>
 				<answer atarget = "Safari_CCC" ><![CDATA[Safari: <img src="/images/compatible_safari.gif" alt="Safari"></img>]]></answer>
-                <answer atarget = "browser_not_listed" ><![CDATA[My Browser is not Listed.]]></answer>	
+                <answer atarget = "browser_not_listed" ><![CDATA[My browser is not listed.]]></answer>	
 			</element>
 
     <!--Resolved -->
@@ -21,26 +21,26 @@
 
     <!-- browser not listed-->
 			<element elname="browser_not_listed">
-				<question><![CDATA[Please use a Supported browser and try again. The system supports IE, Firefox, Google Chrome, and Safari]]></question>
+				<question><![CDATA[Please use a supported browser and try again. The system supports IE, Firefox, Google Chrome, and Safari]]></question>
 			</element>
 			
     <!--Chrome -->
 			<element elname="Chrome_CCC">
-				<question><![CDATA[<iframe width="560" height="315" src="//www.youtube.com/embed/-kJvSmlLC28" frameborder="0"></iframe>]]></question>
+				<question><![CDATA[<object width="100%" height="500"data="http://247pearsoned.custhelp.com/app/answers/detail/a_id/221/kw/221#GC" ></object>]]></question>
 				<answer atarget ="resolved"><![CDATA[My Issue resolved]]></answer>
 				<answer atarget ="select_OS"><![CDATA[My Issue is not resolved]]></answer>
 			</element>
 
     <!--IE -->
 			<element elname="IE_CCC">
-				<question><![CDATA[<iframe width="420" height="315" src="//www.youtube.com/embed/gK4kYn9ETgU" frameborder="0"></iframe>]]></question>
+				<question><![CDATA[<object width="100%" height="500"data="http://247pearsoned.custhelp.com/app/answers/detail/a_id/221/kw/221#IE9" ></object>]]></question>
 				<answer atarget ="resolved"><![CDATA[My Issue resolved]]></answer>
                 <answer atarget ="select_OS"><![CDATA[My Issue is not resolved]]></answer>
 			</element>
 
     <!--Firefox -->
 			<element elname="Firefox_CCC">
-				<question><![CDATA[<iframe width="420" height="315" src="//www.youtube.com/embed/idKDZAv66Dg" frameborder="0"></iframe>]]></question>
+				<question><![CDATA[<object width="420" height="315" data="http://www.youtube.com/embed/idKDZAv66Dg"></object>]]></question>
 				<answer atarget ="resolved"><![CDATA[My Issue resolved]]></answer>
                 <answer atarget ="select_OS"><![CDATA[My Issue is not resolved]]></answer>
 			</element>
@@ -48,7 +48,7 @@
 
     <!--Safari -->
 			<element elname="Safari_CCC">
-				<question><![CDATA[<iframe width="560" height="315" src="//www.youtube.com/embed/wIKW44231F0" frameborder="0"></iframe>]]></question>
+				<question><![CDATA[<object width="100%" height="500"data="http://247pearsoned.custhelp.com/app/answers/detail/a_id/221/kw/221#SAF6" ></object>]]></question>
 				<answer atarget ="resolved"><![CDATA[My Issue resolved]]></answer>
                 <answer atarget ="select_OS"><![CDATA[My Issue is not resolved]]></answer>
 			</element>
@@ -56,7 +56,7 @@
 
     <!--What is you OS  -->
 			<element elname="select_OS">
-				<question><![CDATA[Please Select you Operating System.]]></question>
+				<question><![CDATA[Please select you Operating System.]]></question>
 				<answer atarget ="alt_browser_win"><![CDATA[Microft Windows: <img src="/images/windows_logo.png" alt="Windows Logo"></img>]]></answer>
 				<answer atarget ="alt_browser_mac"><![CDATA[Apple:  <img src="/images/apple_logo.png" alt="Apple logo"></img>]]></answer>
 			</element>

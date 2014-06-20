@@ -140,3 +140,8 @@
 
 2014-05-28:
 1. Corrected an issue with the Config file not loading the correct variables. 
+
+2014-06-19:
+1. Deployed changes for presentation (Demo Guide with only links to KB).
+2. Deployed a new Ajax call to Load JSON files.
+3. Will start coverting all Data stores to JSON.
